@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import { NavLink } from 'react-router-dom';
 
-const Sidebar=({responseData})=>{
+const Sidebar=()=>{
       const [activeButton, setActiveButton] = useState('');
 
       const handleClick = (button) => {
@@ -21,34 +21,25 @@ const handleClickRequest = (button) => {
   
             return state.leave.User;
           });
+
+
+// console.log("isSideBarOpen",isSideBarOpen);
+
     return (
 <>
 
 <div class="container-fluid" style={{height:'590px'}}>
     <div class="row d-flex justify-content-center">
   
-       { users=="Manager"&&  <ul class="nav flex-column">
-          <li class="nav-item mt-3 ">
+       { users=="Manager"&&  <ul class="nav flex-column w-100">
+          <li class="nav-item mt-3 text-center">
           <a class="nav-link text-light border-bottom border-5 border-dark" href="#">
-                <h3>Manager </h3>
+                <h3 >Manager </h3>
                 </a>
           </li>
-
-
-          <NavLink
-  to="/managerProfile"
- className="bg-secondary d-flex justify-content-center mt-4 "
-  activeClassName="active-link"
-  onClick={() => handleClickRequest('leaveRequest')}
-  name="leaveRequest" // Add a unique name prop
->
-  <span className="text-white">Profile</span>
-</NavLink>
-
-        
-          <NavLink
+        <NavLink
   to="/leaveRequest"
- className="bg-secondary d-flex justify-content-center mt-4 "
+ className="bg-secondary d-flex justify-content-center mt-4 p-1"
   activeClassName="active-link"
   onClick={() => handleClickRequest('leaveRequest')}
   name="leaveRequest" // Add a unique name prop
@@ -58,17 +49,14 @@ const handleClickRequest = (button) => {
 
 <NavLink
   to="/employees"
-  className="bg-secondary d-flex justify-content-center mt-4"
+  className="bg-secondary d-flex justify-content-center mt-4 p-1"
   activeClassName="active-link"
   onClick={() => handleClickRequest('employees')}
   name="employees" // Add a unique name prop
 >
  <span className="text-white">Employees</span> 
 </NavLink>
-
-     
-         
-        </ul>}
+ </ul>}
   {users=="Employee"&&<ul class="nav flex-column">
 <li class="nav-item mt-2">
 <a class="nav-link text-light border-bottom border-5 border-dark" >
@@ -80,7 +68,7 @@ const handleClickRequest = (button) => {
 
 <NavLink
         to="/profile"
-        className={`nav-link mt-4 rounded text-center ${activeButton === 'profile' ? 'active' : ''}`}
+        className={`nav-link mt-4 rounded text-center ${activeButton === 'profile' ? 'active' : ''} text-decoration-none`}
         activeClassName="active-link"
         onClick={() => handleClick('profile')}
       >
@@ -93,7 +81,7 @@ const handleClickRequest = (button) => {
       </li>
       <NavLink
         to="/apply"
-        className={`nav-link  text-center ${activeButton === 'apply' ? 'active' : ''}`}
+        className={`nav-link  text-center ${activeButton === 'apply' ? 'active' : ''} text-decoration-none`}
         activeClassName="active-link"
         onClick={() => handleClick('apply')}
       >
@@ -104,23 +92,12 @@ const handleClickRequest = (button) => {
         </h5>
       </NavLink>
 
-
-
-
-
 </ul>}
 
       </div>
       
      
     </div>
-
-
- 
-
-
-
-
 
 
 </>

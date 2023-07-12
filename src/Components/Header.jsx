@@ -1,38 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from '../Assets/Logo.png'
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Sidebar } from "./LeaveSlice";
 
-const Header = ({responseData}) => {
+const Header = ({responseData},{handleToggleSidebar}) => {
+  const dispatch=useDispatch();
     console.log("Users data value",responseData);
     const users = useSelector(state => {
   
       return state.leave.User;
     });
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
+     const handleToggle = () => {
+      
+    dispatch(Sidebar(!isSidebarOpen));
+    setSidebarOpen(!isSidebarOpen);
+  };
+  
+  
+   
   return (
     
     <nav className="navbar navbar-expand-lg  ">
-      <div className="container-fluid">
-        <img src={logo} alt="" />
-        <span className="text-dark mt-1"><h3>Office</h3></span>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav ml-auto mb-2 mb-lg-0 ">
+      <div className="container-fluid ">
+        
+        <span className="text-dark mt-1"><h3> <img src={logo} alt="" /> Office</h3></span>
+      
+       
+        <div >
+          <ul className="navbar-nav ml-auto mb-2  ">
             
              {users=="Manager" && <li className="nav-item d-flex">
             
-              
+              <div className="d-flex">
                  
                   <Link className="nav-link text-dark mr-3" >
                 <h5>Home</h5> 
@@ -46,8 +48,15 @@ const Header = ({responseData}) => {
                 <Link className="nav-link text-dark mr-3">
                 <h5><i class="fa-solid fa-right-from-bracket text-dark"></i></h5>
                 </Link>
-               
-               
+                </div>
+                <div className=" mt-2 ">
+                <div>     <h5> <i className="fa-solid fa-bars" onClick={handleToggle}></i></h5> </div>
+ 
+</div>
+
+
+
+
               </li>
 }
             
@@ -67,7 +76,10 @@ const Header = ({responseData}) => {
               <h5><i class="fa-solid fa-right-from-bracket text-dark"></i></h5>
               </Link>
              
-             
+              <div className=" mt-2">
+                <div>     <h5> <i className="fa-solid fa-bars "></i></h5> </div>
+ 
+</div>
             </li>
 }           </ul>
         </div>

@@ -1,9 +1,9 @@
 
 import { useState } from "react";
-import Header from "./Header";
+
 import axios from "axios";
-import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {  FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+
 import Layout from "./Layout";
 import { useDispatch } from "react-redux";
 import {  Employeesdata, LoginUser, userDetails } from "./LeaveSlice";
@@ -45,12 +45,13 @@ const Login = () => {
     dispatch(Employeesdata(responsedata.data));
 
     if (selectedRole === "Manager") {
+      console.log("formdata manager",formData);
       const response = await axios.post(
         "https://localhost:7189/mgrlogin",
         formData
       );
-      console.log("Manager", response);
-      localStorage.setItem("ManagerToken", response.data.generatedToken);
+     
+
       dispatch(userDetails("Manager"));
       dispatch(LoginUser(response.data));
       setUser("Manager");
