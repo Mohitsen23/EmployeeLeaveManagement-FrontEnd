@@ -54,7 +54,7 @@ console.log("leave quota data ",leaveQuota);
   
   }
   const getStatusColor = (status) => {
-    if (status === 'pending                       ' || status === 'pending') {
+    if (status === 'pending                                           ' || status === 'pending') {
       return 'bg-warning';
     } else if (status === 'Rejected                      ' || status === 'Rejected') {
       return 'bg-danger';
@@ -130,8 +130,8 @@ console.log("leave quota data ",leaveQuota);
     outputObject.leave.id=LoginData.id;
     outputObject.leave.employeeid=LoginData.id;
       const response=await axios.post("https://localhost:7189/applyleave",outputObject,);
-      console.log('Form Data:', outputObject);
-      console.log('Form Data:', response);
+      dispatch(addLeaves([...LeaveStatus,response.data]));
+    
     };
   
 
@@ -156,7 +156,7 @@ console.log("leave quota data ",leaveQuota);
   
   console.log("inputValue",inputValue);
   
-
+  console.log("emplid and loginid",LeaveStatus.emplid,LoginData.id)
     return(
         <>
   <div className="container">
@@ -276,8 +276,9 @@ console.log("leave quota data ",leaveQuota);
         <TableBody>
    
 
-  
+  {
   <TableRow >
+    
     <TableCell>{leaveQuota.id}</TableCell>
     <TableCell>{leaveQuota.emplid}</TableCell>
     <TableCell>{leaveQuota.remainingleave}</TableCell>
@@ -285,6 +286,7 @@ console.log("leave quota data ",leaveQuota);
     <TableCell>{leaveQuota.usedleave}</TableCell>
 
   </TableRow>
+}
 
 
 </TableBody>
@@ -295,11 +297,13 @@ console.log("leave quota data ",leaveQuota);
   </div>
 </div>
 }
+
  
 
 
    {selectedOption=="Leave Status" &&
 <div className="container">
+  
 <h4 className="text-center mt-3">Leave Status</h4>
   <div className="row mt-3">
   <span > <input placeholder="search " value={inputValue} onChange={handleinputChange} className="mt-2 border border-4 border-primary rounded mr-3" />
@@ -311,7 +315,7 @@ console.log("leave quota data ",leaveQuota);
           <TableRow>
             <TableCell>ID</TableCell>
             <TableCell>Emp Id</TableCell>
-            <TableCell>Leave Type</TableCell>
+            <TableCell>Leave Type</TableCell>searchInput
             <TableCell>From Date</TableCell>
             <TableCell>To Date</TableCell>
             <TableCell>Reason</TableCell>
@@ -320,7 +324,10 @@ console.log("leave quota data ",leaveQuota);
           </TableRow>
         </TableHead>
         <TableBody>
+          {}
           {LeaveStatus.map((row) => (
+           
+           row.emplid===LoginData.id ?(
             <TableRow key={row.id}>
                <TableCell>{row.id}</TableCell>
                <TableCell>{row.emplid}</TableCell>
@@ -331,6 +338,8 @@ console.log("leave quota data ",leaveQuota);
               <TableCell  className={getStatusColor(row.status)}> {row.status}</TableCell>
               <TableCell   onClick={() => handleDelete(row.id)}><i class="fa-sharp fa-solid fa-trash"></i></TableCell>
             </TableRow>
+
+            ):null
           ))}
         </TableBody>
       </Table>

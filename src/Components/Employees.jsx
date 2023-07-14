@@ -12,9 +12,13 @@ const Employees = () => {
   const EmployeeList = useSelector(state => state.leave.EmployeesDetails);
   const LoginData = useSelector(state => state.leave.LoginUser);
 
-  const handleRemove = () => {
-    const updatedEmployee = EmployeeList.filter(data => data.manager !== LoginData.id);
+  const handleRemove = (user) => {
+    
+    const updatedEmployee = EmployeeList.filter(data =>
+  
+      data.email !== user);
     dispatch(Employeesdata(updatedEmployee));
+    const response=axios.delete(`https://localhost:7189/deleteEmployee/${user}`)
     console.log("updated employee", updatedEmployee);
   };
 
@@ -23,10 +27,6 @@ const Employees = () => {
   useEffect(() => {
     setAllEmployeeData(EmployeeList);
   }, []);
-
-  
-
- 
 
   const [employeefrom, setEmployeeform] = useState({
     firstname: '',
@@ -124,15 +124,27 @@ const Employees = () => {
   };
   
   const handleAllEmployee = () => {
-    dispatch(Employeesdata(EmployeeList));
+    dispatch(Employeesdata(employeedata));
   };
   
   const handleMyEmployee = (data) => {
     const filteredEmployees = EmployeeList.filter(row => row.manager.toString() === data.toString());
     dispatch(Employeesdata(filteredEmployees));
   };
+const[searchinput,setSearchInput]=useState('');
 
+const handleSearch=(event)=>{
+  setSearchInput(event.target.value);
+}
+const filteredRequests = searchinput
+  ? EmployeeList.filter((row) => {
+      const searchValue = searchinput.toLowerCase();
+      return Object.values(row).some((value) =>
 
+        value && value.toString().toLowerCase().includes(searchValue)
+      );
+    })
+  : EmployeeList;
 
   return (
     <>
@@ -142,8 +154,12 @@ const Employees = () => {
         </div>
         <div className="d-flex justify-content-between">
           <div className="d-flex justify-content-end mt-2">
-            <Button variant="contained" className="text-center bg-primary text-white" onClick={openedDialog}>Add Employees</Button>
+            <Button  className="text-center  text-white border border-1 border-primary text-primary"  onClick={openedDialog}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
           </div>
+
+          <div className="d-flex justify-content-end mt-2">
+          <input placeholder="Search" value={searchinput} onChange={handleSearch} className="mt-2 border border-4 border-primary rounded mr-3" />
+                   </div>
           <FormControl fullWidth className="w-25">
   <InputLabel id='demo-simple-select-label'>Select</InputLabel>
   <Select
@@ -174,7 +190,7 @@ const Employees = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {EmployeeList.map((item, index) => (
+                {filteredRequests.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell>{item.id}</TableCell>
                     <TableCell>{item.firstname}</TableCell>
@@ -188,7 +204,7 @@ const Employees = () => {
                         <TableCell onClick={() => handleUpdate(item.leaveid)}>
                           <Button className="bg-warning text-white" onClick={() => openDialog(item.id)}> Update</Button>
                         </TableCell>
-                        <TableCell onClick={() => handleRemove(item.manager)}>
+                        <TableCell onClick={() => handleRemove(item.email)}>
                           <Button className="bg-danger text-white"> Remove</Button>
                         </TableCell>
                       </>

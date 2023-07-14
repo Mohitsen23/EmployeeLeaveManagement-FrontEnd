@@ -11,12 +11,19 @@ const LeaveRequest = () => {
     return state.leave.LoginUser;
   })
   
-
+const tokendata=useSelector((state)=>{
+    return state.leave.Token;
+})
+const config = {
+  headers: {
+    'Authorization': `Bearer ${tokendata}`
+  }
+};
   const [searchInput, setSearchInput] = useState('');
   const leaveRequest = useSelector(state => state.leave.Leave);
 
   const getStatusColor = (status) => {
-    if (status === 'pending                       ' || status === 'pending') {
+    if (status === 'pending                                           ' || status === 'pending') {
       return 'bg-warning';
     } else if (status === 'Rejected                      ' || status === 'Rejected') {
       return 'bg-danger';
@@ -31,7 +38,7 @@ const LeaveRequest = () => {
   const handleRejected = (id) => {
     const updatedRequest = leaveRequest.map((data) => {
       if (data.leaveid == id) {
-        axios.get(`https://localhost:7189/RejectLeaveRequest/${data.leaveid}`);
+        axios.get(`https://localhost:7189/RejectLeaveRequest/${data.leaveid}`,config);
         return { ...data, status: 'Rejected' };
       }
       return data;
@@ -42,7 +49,7 @@ const LeaveRequest = () => {
   const handleAcceptRequest = (id) => {
     const updatedRequest = leaveRequest.map((data) => {
       if (data.leaveid === id) {
-        axios.get(`https://localhost:7189/ChangeLeaveStatus/${data.leaveid}`);
+        axios.get(`https://localhost:7189/ChangeLeaveStatus/${data.leaveid}`,config);
         return { ...data, status: 'Approved' };
       }
       return data;
@@ -74,7 +81,7 @@ console.log("filtered manager, logindata request manager",filteredRequests,Login
           <span>
             <input placeholder="Search" value={searchInput} onChange={handleChangeInput} className="mt-2 border border-4 border-primary rounded mr-3" />
           </span>
-          <TableContainer>
+          <TableContainer className="w-100">
             <Table>
               <TableHead>
                 <TableRow>
@@ -100,7 +107,7 @@ console.log("filtered manager, logindata request manager",filteredRequests,Login
         <TableCell>{row.toDate}</TableCell>
         <TableCell>{row.reason}</TableCell>
         <TableCell className={getStatusColor(row.status)}>{row.status}</TableCell>
-        {row.status === "pending                       " && (
+        {row.status === "pending                                           " && (
           <>
             <TableCell onClick={() => { handleRejected(row.leaveid) }}><Button className="bg-danger text-white">Reject</Button></TableCell>
             <TableCell onClick={() => { handleAcceptRequest(row.leaveid) }}><Button className="bg-success text-white">Accept</Button></TableCell>
@@ -110,9 +117,7 @@ console.log("filtered manager, logindata request manager",filteredRequests,Login
     ) : null
   ))}
 </TableBody>
-
-             
-            </Table>
+  </Table>
           </TableContainer>
         </div>
       </div>

@@ -6,7 +6,7 @@ import {  FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 import Layout from "./Layout";
 import { useDispatch } from "react-redux";
-import {  Employeesdata, LoginUser, userDetails } from "./LeaveSlice";
+import {  Employeesdata, LoginUser, TokenData, userDetails } from "./LeaveSlice";
 import { addLeaves } from './LeaveSlice';
 
 const Login = () => {
@@ -30,42 +30,79 @@ const Login = () => {
   const handleRole = (e) => {
     setSelectedRole(e.target.value);
   };
-
  
   const [isLoggedIn, setisLoggedIn] = useState(false);
   
   const [user,setUser]=useState('');
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.get("https://localhost:7189/leaveRequest");
-    dispatch(addLeaves(response.data));
-   
-    const responsedata = await axios.get("https://localhost:7189/getEmployees");
-    dispatch(Employeesdata(responsedata.data));
-
+  
     if (selectedRole === "Manager") {
-      console.log("formdata manager",formData);
-      const response = await axios.post(
-        "https://localhost:7189/mgrlogin",
-        formData
-      );
-     
+      console.log("formdata manager", formData);
+      axios.post("https://localhost:7189/mgrlogin", formData)
+        .then((response) => {
+        
+          dispatch(TokenData(response.data));
+          const config = {
+            headers: {
+              'Authorization': `Bearer ${response.data}`
+            }
+          };
 
-      dispatch(userDetails("Manager"));
-      dispatch(LoginUser(response.data));
-      setUser("Manager");
-      setisLoggedIn(true);
-      // navigate("/layout",{state:{responseData:1}});
+          axios.post("https://localhost:7189/mgrlogindata",formData, config)
+          .then((response) => {
+            console.log("response",response);
+            dispatch(LoginUser(response.data));
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+
+          axios.get("https://localhost:7189/leaveRequest", config)
+          .then((response) => {
+            
+            dispatch(addLeaves(response.data));
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+          dispatch(userDetails("Manager"));
+          dispatch(LoginUser(response.data));
+          setUser("Manager");
+          setisLoggedIn(true);
+          // navigate("/layout",{state:{responseData:1}});
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     } else {
-      const response = await axios.post("https://localhost:7189/emplogin", formData);
-      console.log("Employee", response);
-      dispatch(LoginUser(response.data));
-      dispatch(userDetails("Employee"));
-      setisLoggedIn(true);
-    
+      axios.post("https://localhost:7189/emplogin", formData)
+        .then((response) => {
+          console.log("Employee", response);
+          dispatch(LoginUser(response.data));
+          dispatch(userDetails("Employee"));
+          setisLoggedIn(true);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
+  
+    axios.get("https://localhost:7189/getEmployees")
+      .then((responsedata) => {
+        dispatch(Employeesdata(responsedata.data));
+   
+       
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
+
+
 
   return (
     <>

@@ -5,7 +5,8 @@ const initialState = {
   User: "",
   LoginUser:"",
   EmployeesDetails:[],
-  Sidebar:true
+  Sidebar:true,
+  Token:''
   
 };
 
@@ -28,9 +29,12 @@ const LeaveSlice = createSlice({
     Sidebar:(state,{payload})=>{
       state.Sidebar=payload;
     },
+    TokenData:(state,{payload})=>{
+      state.Token=payload;
+    }
 
   }
 });
 
-export const { addLeaves, userDetails,LoginUser,Employeesdata ,Sidebar} = LeaveSlice.actions;
+export const { addLeaves, userDetails,LoginUser,Employeesdata ,Sidebar,TokenData} = LeaveSlice.actions;
 export default LeaveSlice.reducer;
