@@ -56,6 +56,8 @@ const handleClickRequest = (button) => {
 >
  <span className="text-white">Employees</span> 
 </NavLink>
+
+
  </ul>}
   {users=="Employee"&&<ul class="nav flex-column">
 <li class="nav-item mt-2">
@@ -89,6 +91,21 @@ const handleClickRequest = (button) => {
           activeButton === 'apply' ? 'white' : 'black'
         } hover:bg-primary`}>
            Apply Leave 
+        </h5>
+      </NavLink>
+
+
+
+      <NavLink
+        to="/email"
+        className={`nav-link  text-center ${activeButton === 'email' ? 'active' : ''} text-decoration-none`}
+        activeClassName="active-link"
+        onClick={() => handleClick('email')}
+      >
+        <h5 className={`text-center mt-2 rounded py-1 px-2 bg-${activeButton === 'email' ? 'secondary' : ''} text-${
+          activeButton === 'email' ? 'white' : 'black'
+        } hover:bg-primary`}>
+           Email
         </h5>
       </NavLink>
 

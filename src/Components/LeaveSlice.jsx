@@ -6,7 +6,9 @@ const initialState = {
   LoginUser:"",
   EmployeesDetails:[],
   Sidebar:true,
-  Token:''
+  Token:'',
+  isAuthenticated:false,
+  EmployeesProfile:[]
   
 };
 
@@ -31,10 +33,15 @@ const LeaveSlice = createSlice({
     },
     TokenData:(state,{payload})=>{
       state.Token=payload;
+    },
+    SetAuthenticated:(state,{payload})=>{
+     state.isAuthenticated=payload;
+    },
+    SetEmployeesProfile:(state,{payload})=>{
+      state.EmployeesProfile=payload;
     }
-
   }
 });
 
-export const { addLeaves, userDetails,LoginUser,Employeesdata ,Sidebar,TokenData} = LeaveSlice.actions;
+export const { addLeaves, userDetails,LoginUser,Employeesdata ,Sidebar,TokenData,SetAuthenticated,SetEmployeesProfile} = LeaveSlice.actions;
 export default LeaveSlice.reducer;

@@ -8,6 +8,10 @@ import LeaveRequest from './LeaveRequest';
 import Employees from './Employees';
 import { useDispatch, useSelector } from 'react-redux';
 import ManagerProfile from './ManagerProfile';
+import Login from './Login';
+import ViewData from './ViewData';
+import EMpProfile from './EMpProfile';
+
 
 
 function Layout() {
@@ -15,7 +19,9 @@ function Layout() {
   const isSidebarOpen = useSelector((state) => state.leave.Sidebar);
 
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
+const isAuthenticated=useSelector((state)=>{
+  return state.leave.isAuthenticated;
+})
   const handleToggleSidebar = () => {
     if (window.innerWidth <= 768) {
       setMobileSidebarOpen(!isMobileSidebarOpen);
@@ -48,13 +54,19 @@ function Layout() {
           }`}
         >
           <div className="main-content">
+        
             <Routes>
+            <Route path="/EmpProfile" element={<EMpProfile />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/apply" element={<ApplyLeave />} />
               <Route path="/leaveRequest" element={<LeaveRequest />} />
               <Route path="/employees" element={<Employees />} />
               <Route path="/managerProfile" element={<ManagerProfile />} />
-            </Routes>
+             
+              </Routes>
+             
+             
+             
           </div>
         </div>
       </div>
