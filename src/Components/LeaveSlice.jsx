@@ -8,7 +8,8 @@ const initialState = {
   Sidebar:true,
   Token:'',
   isAuthenticated:false,
-  EmployeesProfile:[]
+  EmployeesProfile:[],
+  Notificationdata:[]
   
 };
 
@@ -39,9 +40,12 @@ const LeaveSlice = createSlice({
     },
     SetEmployeesProfile:(state,{payload})=>{
       state.EmployeesProfile=payload;
+    },
+    setNotification:(state,{payload})=>{
+         state.Notificationdata=payload;
     }
   }
 });
 
-export const { addLeaves, userDetails,LoginUser,Employeesdata ,Sidebar,TokenData,SetAuthenticated,SetEmployeesProfile} = LeaveSlice.actions;
+export const { addLeaves, userDetails,LoginUser,Employeesdata ,Sidebar,TokenData,SetAuthenticated,SetEmployeesProfile,setNotification} = LeaveSlice.actions;
 export default LeaveSlice.reducer;

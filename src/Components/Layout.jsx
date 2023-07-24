@@ -9,7 +9,7 @@ import Employees from './Employees';
 import { useDispatch, useSelector } from 'react-redux';
 import ManagerProfile from './ManagerProfile';
 import Login from './Login';
-import ViewData from './ViewData';
+
 import EMpProfile from './EMpProfile';
 
 
@@ -22,6 +22,8 @@ function Layout() {
 const isAuthenticated=useSelector((state)=>{
   return state.leave.isAuthenticated;
 })
+
+
   const handleToggleSidebar = () => {
     if (window.innerWidth <= 768) {
       setMobileSidebarOpen(!isMobileSidebarOpen);

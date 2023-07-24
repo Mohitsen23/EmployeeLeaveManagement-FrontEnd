@@ -6,11 +6,13 @@ import {  FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import {  Dialog, DialogContent, DialogTitle } from "@mui/material";
 import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
-import {  Employeesdata, LoginUser, SetAuthenticated, SetEmployeesProfile, TokenData, userDetails } from "./LeaveSlice";
+import {  Employeesdata, LoginUser, SetAuthenticated, SetEmployeesProfile, TokenData, setNotification, userDetails } from "./LeaveSlice";
 import { addLeaves } from './LeaveSlice';
+
 
 const Login = () => {
   const dispatch=useDispatch();
+  const dispatch1=useDispatch();
  const [loginotp,setLoginOTP]=useState('');
   const handleEmailSubmit=(e)=>{
   e.preventDefault();
@@ -50,7 +52,15 @@ const [otp,setOtpData]=useState('')
   const [count,setCount]=useState(30);
   const [isCounting, setIsCounting] = useState(false);
 
-  useEffect(() => {
+
+
+
+
+
+
+useEffect(() => {
+
+
     let interval;
     
     if (isCounting && count > 0) {
@@ -107,8 +117,11 @@ const handleOTPSubmit=async (e)=>{
         .then((response) => {
           dispatch(SetAuthenticated(true));
           dispatch(TokenData(response.data));
+         
+          
           const config = {
             headers: {
+
               'Authorization': `Bearer ${response.data}`
             }
           };
@@ -156,6 +169,8 @@ const handleOTPSubmit=async (e)=>{
           console.log("Employee", response);
           dispatch(LoginUser(response.data));
           dispatch(userDetails("Employee"));
+         
+        
           
           setisLoggedIn(true);
         })

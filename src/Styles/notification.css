@@ -1,0 +1,9 @@
+.notification{
+    margin-left:800px;
+    margin-top:80px;
+   
+}
+.notification .card{
+    background-color: rgb(99, 124, 199);
+    opacity: 1;
+}
