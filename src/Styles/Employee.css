@@ -3,4 +3,30 @@
     transition: transform 0.2s;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
   }
-  
+  .bot{
+    width: 70px;
+  }
+  .chatbot{
+    top: 450px;
+    left: -120px;
+    position: sticky;
+    
+  }
+  .chatfix{
+    top: 200px;
+    left: -120px;
+    position: sticky;
+    
+  }
+.chatfix .chatdiv{
+    border: 2px solid rgb(255, 255, 255);
+    cursor: pointer;
+   border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    background-color: rgba(218, 211, 211, 0.907);
+    padding: 5px;
+  }
+  .chatbox{
+    border: 2px solid blue;
+    padding: 10px;
+  }

@@ -1,41 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@material-ui/core';
-import { Employeesdata } from "./LeaveSlice";
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@material-ui/core';
+import { Employeesdata, setBotMsgs, setConnectionId, setNotification } from "./LeaveSlice";
+import { FormControl, InputLabel, MenuItem, Select, } from '@mui/material';
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
-import "../Styles/Employee.css"
+import "../Styles/Employee.css";
+import robot from '../Assets/robot.png'
 import axios from "axios";
 import Swal from "sweetalert2";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-
 import Typography from '@mui/material/Typography';
+import { HttpTransportType, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 const Employees = () => {
   const dispatch = useDispatch();
   const EmployeeList = useSelector(state => state.leave.EmployeesDetails);
   const LoginData = useSelector(state => state.leave.LoginUser);
-  const employprofile=useSelector(state=>
-     state.leave.EmployeesProfile);
-   
+  const employprofile = useSelector(state =>
+    state.leave.EmployeesProfile);
+
   const handleRemove = (user) => {
-    
     const updatedEmployee = EmployeeList.filter(data =>
-  
       data.email !== user);
     dispatch(Employeesdata(updatedEmployee));
-    const response=axios.delete(`https://localhost:7189/deleteEmployee/${user}`)
+    const response = axios.delete(`https://localhost:7189/deleteEmployee/${user}`)
     console.log("updated employee", updatedEmployee);
   };
-const [employeeProfile,setEmployeeProfile]=useState([]);
+  const [employeeProfile, setEmployeeProfile] = useState([]);
   const [employeedata, setAllEmployeeData] = useState([]);
 
   useEffect(() => {
-    
-  console.log("employee profile data",employeeProfile);
+
+    console.log("employee profile data", employeeProfile);
     setAllEmployeeData(EmployeeList);
   }, []);
 
@@ -51,10 +49,10 @@ const [employeeProfile,setEmployeeProfile]=useState([]);
   });
 
   const [employee, setEmployee] = useState('All Employees');
- 
+
 
   const handleUpdate = () => {
-    // Update logic
+
   };
 
   const [isOpen, setIsOpen] = useState(false);
@@ -89,9 +87,9 @@ const [employeeProfile,setEmployeeProfile]=useState([]);
         'Employee Updated',
         'success'
       );
-      console.log(response.data); // Handle the response data
+      console.log(response.data);
     } catch (error) {
-      console.error(error); // Handle errors
+      console.error(error);
     }
 
     if (updatedEmployeeIndex !== -1) {
@@ -100,6 +98,7 @@ const [employeeProfile,setEmployeeProfile]=useState([]);
       dispatch(Employeesdata(updatedEmployeeList));
     }
   };
+const [chaticon,setchaticon]=useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -126,45 +125,44 @@ const [employeeProfile,setEmployeeProfile]=useState([]);
   const handleEmployeeChange = (event) => {
     const selectedValue = event.target.value;
     setEmployee(selectedValue);
-  
+
     if (selectedValue === "All Employees") {
       handleAllEmployee();
     } else if (selectedValue === "My Employee") {
       handleMyEmployee(LoginData.id);
     }
-  
+
   };
-  
+const handlechatbot=()=>{
+  setchaticon(!chaticon);
+}
   const handleAllEmployee = () => {
     SetProfile(false);
     dispatch(Employeesdata(employeedata));
   };
-  const [isProfile,SetProfile]=useState(false);
-  const handleEmployeeProfile=()=>{
+  const [isProfile, SetProfile] = useState(false);
+  const handleEmployeeProfile = () => {
     SetProfile(true);
-    
-    
   }
-  
+
   const handleMyEmployee = (data) => {
     SetProfile(false);
     const filteredEmployees = EmployeeList.filter(row => row.manager.toString() === data.toString());
     dispatch(Employeesdata(filteredEmployees));
   };
-const[searchinput,setSearchInput]=useState('');
-
-const handleSearch=(event)=>{
-  setSearchInput(event.target.value);   
-}
-const filteredRequests = searchinput
-  ? EmployeeList.filter((row) => {
+  const [searchinput, setSearchInput] = useState('');
+  const handleSearch = (event) => {
+    setSearchInput(event.target.value);
+  }
+  const filteredRequests = searchinput
+    ? EmployeeList.filter((row) => {
       const searchValue = searchinput.toLowerCase();
       return Object.values(row).some((value) =>
 
         value && value.toString().toLowerCase().includes(searchValue)
       );
     })
-  : EmployeeList;
+    : EmployeeList;
 
   const employeeMap = EmployeeList.reduce((map, employee) => {
     map[employee.id] = employee;
@@ -174,142 +172,216 @@ const filteredRequests = searchinput
   const combinedData = employprofile.map((profile) => {
     const employeeData = employeeMap[profile.emplid];
     return {
-      ...profile ,...employeeData
-      
+      ...profile, ...employeeData
+
     };
   });
-  console.log("combine data",combinedData);
+ 
+  const [chat, setChat] = useState({
+    message: ""
+  })
+  const connectionRef = useRef(null);
+  useEffect(() => {
+
+    connectionRef.current = new HubConnectionBuilder()
+    .withUrl("https://localhost:7189/notificationHub", {
+     
+      skipNegotiation: true,
+      transport: HttpTransportType.WebSockets
+    })
+    .configureLogging(LogLevel.Trace)
+    .withAutomaticReconnect()
+    .build();
+  
+  connectionRef.current
+    .start()
+    .then(() => console.log("SignalR Connected"))
+    .catch((err) => console.log("SignalR Connection Error: ", err));
+  connectionRef.current.on("Connected", (connectionid, userid) => {
+
+    dispatch(setConnectionId(userid));
+  })
+
+
+  connectionRef.current.on("ReceiveBotMessage", (response) => {
+      dispatch(setNotification([response]));
+    });
+  }, [])
+const sendmsgs=useSelector((state)=>{
+  return state.leave.SendBotMsgs;
+}) 
+  const handlechat = (e) => {
+    setChat(e.target.value);
+  }
+  const notification = useSelector((state) => {
+    return state.leave.Notificationdata;
+  })
+  const sendmsgtochatbot = () => {
+    connectionRef.current.invoke("SendMessagetoBot", chat).catch((error) => console.error(error));
+    dispatch(setBotMsgs(chat));
+    setChat("");
+  }
+  console.log("combine data", combinedData);
+  const handlecancel=()=>{
+    setchaticon(!chaticon);
+  }
   return (
     <>
-
-
-
-      <div className="container-fluid">
+      <div className="container-fluid position-absolute">
         <div className="d-flex justify-content-center">
           <h4 className="text-center mt-2">Employees Profile</h4>
         </div>
         <div className="d-flex justify-content-between">
           <div className="d-flex justify-content-end mt-2">
-            <Button  className="text-center  text-white border border-1 border-primary text-primary"  onClick={openedDialog}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
+            <Button className="text-center  text-white border border-1 border-primary text-primary" onClick={openedDialog}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
+          </div>
+          <div className="d-flex justify-content-end mt-2">
+            <input placeholder="Search" value={searchinput} onChange={handleSearch} className="mt-2 border border-4 border-primary rounded mr-3" />
+          </div>
+          <FormControl fullWidth className="w-25">
+            <InputLabel id='demo-simple-select-label'>Select</InputLabel>
+             <Select
+              labelId='demo-simple-select-label'
+              id='demo-simple-select'
+              label='leavetype'
+              value={employee}
+              onChange={handleEmployeeChange}>
+              <MenuItem value="All Employees" className="ml-5">All Employees</MenuItem>
+              <hr/>
+              <MenuItem value="My Employee" className="ml-5">My Employee</MenuItem> <hr></hr>
+              <div className="d-flex justify-content-end mt-2">
+              <Button className="text-center  text-white border border-1 border-primary text-primary" onClick={handleEmployeeProfile}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
+              </div>
+              </Select>
+          </FormControl>
+        </div>
+        {isProfile ? (
+          <div className="row">
+            {employprofile && employprofile.length > 0 ? (
+              combinedData.map((data) => (
+               <div className="col-lg-4 col-md-4 col-sm-6 mt-5">
+                  <Card sx={{ maxWidth: 345 }} key={data.id} className=" border border-5 border-primary ml-3" style={{ borderRadius: "15px" }}>
+                    <img src={`data:image/png;base64,${data.img}`} alt="Employee Profile" className="card-img-top" style={{ objectFit: "cover", height: "200px", borderRadius: "15px 15px 0 0" }} />
+                    <CardContent>
+                      <Typography variant="h5" component="div">
+                        Name: {data.firstname}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        Email: {data.email}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        Department: {data.department}
+                      </Typography>
+                    </CardContent>
+                    <CardActions className="d-flex justify-content-center">
+                      <Button size="small" variant="contained" className="btn btn-primary  bg-primary text-white" style={{ borderRadius: "5px", }}>
+                        View Profile
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </div>))
+            ) : (
+              <p>No employee profile data available.</p>
+            )}
+          </div>
+        ) : (
+            <div className="row mt-3">
+            <TableContainer >
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Id</TableCell>
+                    <TableCell>First Name</TableCell>
+                    <TableCell>Last Name</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Department</TableCell>
+                    <TableCell>CompanyName</TableCell>
+                    <TableCell>Manager</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredRequests.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{item.id}</TableCell>
+                      <TableCell>{item.firstname}</TableCell>
+                      <TableCell>{item.lastname}</TableCell>
+                      <TableCell>{item.email}</TableCell>
+                      <TableCell>{item.department}</TableCell>
+                      <TableCell>{item.companyname}</TableCell>
+                      <TableCell>{item.manager}</TableCell>
+                      {LoginData.id === item.manager && (
+                        <>
+                          <TableCell onClick={() => handleUpdate(item.leaveid)}>
+                            <Button className="bg-warning text-white" onClick={() => openDialog(item.id)}> Update</Button>
+                          </TableCell>
+                          <TableCell onClick={() => handleRemove(item.email)}>
+                            <Button className="bg-danger text-white"> Remove</Button>
+                          </TableCell>
+                        </>
+                      )}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+        )
+        }
+  </div>
+
+   <div className={` ${
+            chaticon ? 'position-relative  chatfix' : 'position-relative chatbot'
+          }`}>
+        {
+          chaticon && <div className=" d-flex justify-content-end ">
+            <div className="chatdiv ">
+             <div className="d-flex justify-content-end"> <i class="fa-regular fa-circle-xmark" onClick={handlecancel}></i></div>
+            <h5 className="text-center">Chat Bot</h5>
+           {notification && notification.map((item,index)=>{
+           return( <div key={index}>{item} </div>);
+           })
+            
+           } 
+
+
+        {sendmsgs && sendmsgs.map((item,index)=>{
+           return( <div key={index}>{item} </div>);
+           })
+            
+           } 
+
+
+            <div className="d-flex justify-content-center">
+            <input type="text" value={chat.message} className="border rounded border-5 border-primary " onChange={handlechat}></input>
+          <button onClick={sendmsgtochatbot} className="border rounded border-5 border-primary">send</button></div>
+          </div>
           </div>
          
 
-          <div className="d-flex justify-content-end mt-2">
-          <input placeholder="Search" value={searchinput} onChange={handleSearch} className="mt-2 border border-4 border-primary rounded mr-3" />
-                   </div>
-          <FormControl fullWidth className="w-25">
-  <InputLabel id='demo-simple-select-label'>Select</InputLabel>
-  <Select
-    labelId='demo-simple-select-label'
-    id='demo-simple-select'
-    label='leavetype'
-    value={employee}
-    onChange={handleEmployeeChange}
-  >
-    <MenuItem value="All Employees" className="ml-5">All Employees</MenuItem>
-    <hr />
-    <MenuItem value="My Employee" className="ml-5">My Employee</MenuItem> <hr></hr>
-    <div className="d-flex justify-content-end mt-2">
-            <Button  className="text-center  text-white border border-1 border-primary text-primary"  onClick={handleEmployeeProfile}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
-          </div>
-  </Select>
-</FormControl>
-        </div>
-       { isProfile?(
-          <div className="row">
-
-
-     
-          {employprofile && employprofile.length > 0 ? (
-            combinedData.map((data) => (
-              
-              <div className="col-lg-4 col-md-4 col-sm-6 mt-5">
-  <Card sx={{ maxWidth: 345 }} key={data.id} className=" border border-5 border-primary ml-3" style={{ borderRadius: "15px" }}>
-    <img src={`data:image/png;base64,${data.img}`} alt="Employee Profile" className="card-img-top" style={{ objectFit: "cover", height: "200px", borderRadius: "15px 15px 0 0" }} />
-    <CardContent>
-      <Typography variant="h5" component="div">
-        Name: {data.firstname}
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        Email: {data.email}
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        Department: {data.department}
-      </Typography>
-    </CardContent>
-    <CardActions className="d-flex justify-content-center">
-      <Button size="small" variant="contained"  className="btn btn-primary  bg-primary text-white" style={{ borderRadius: "5px", }}>
-        View Profile
-      </Button>
-    </CardActions> 
-  </Card>
-</div> ))
-          ) : (
-            <p>No employee profile data available.</p>
-          )}
-       
-    
-    
-            </div>
-        ):(
+        }
+      {!chaticon &&  <div className="d-flex justify-content-end"> 
       
-        
-        
-        <div className="row mt-3">
-          <TableContainer >
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Id</TableCell>
-                  <TableCell>First Name</TableCell>
-                  <TableCell>Last Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Department</TableCell>
-                  <TableCell>CompanyName</TableCell>
-                  <TableCell>Manager</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredRequests.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{item.id}</TableCell>
-                    <TableCell>{item.firstname}</TableCell>
-                    <TableCell>{item.lastname}</TableCell>
-                    <TableCell>{item.email}</TableCell>
-                    <TableCell>{item.department}</TableCell>
-                    <TableCell>{item.companyname}</TableCell>
-                    <TableCell>{item.manager}</TableCell>
-                    {LoginData.id === item.manager && (
-                      <>
-                        <TableCell onClick={() => handleUpdate(item.leaveid)}>
-                          <Button className="bg-warning text-white" onClick={() => openDialog(item.id)}> Update</Button>
-                        </TableCell>
-                        <TableCell onClick={() => handleRemove(item.email)}>
-                          <Button className="bg-danger text-white"> Remove</Button>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-        )
+          <span onClick={handlechatbot}>
+          <img src={robot} className="bot" alt="" />
+          </span>
+         </div>
 }
-        
-      </div>
+
+   </div>
 
 
-      <div>
+          {/* <div className="d-flex justify-content-end  ">
+           {chaticon &&  <span className="chatbox">
+          a<h5 className="text-white text-center">Chat Bot</h5>
 
-      </div>
-
-     
-
+          <div> </div>
+       
+          
+         
+          </div> */}
       <Dialog open={isOpened} onClose={closedDialog}>
         <DialogTitle>Add Employee</DialogTitle>
-        <DialogContent>
+          <DialogContent>
           <form onSubmit={handleAddEmployee}>
             <div className="container">
               <div className="d-flex">
@@ -317,22 +389,22 @@ const filteredRequests = searchinput
                   <div className="form-group">
                     <label htmlFor="firstname">First Name</label>
                     <input type="text" className="form-control" id="firstname" name="firstname" value={employeefrom.firstname} onChange={handleAddEmp} placeholder="Enter first name" required />
-                  </div>
-                  <div className="form-group">
+                    </div>
+                    <div className="form-group">
                     <label htmlFor="lastname">Last Name</label>
                     <input type="text" className="form-control" id="lastname" name="lastname" value={employeefrom.lastname} onChange={handleAddEmp} placeholder="Enter last name" required />
-                  </div>
-                  <div className="form-group">
+                    </div>
+                    <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input type="email" className="form-control" id="email" name="email" value={employeefrom.email} onChange={handleAddEmp} placeholder="Enter email" required />
-                  </div>
-                </div>
-                <div className="ml-3">
-                  <div className="form-group">
+                    </div>
+                    </div>
+                 <div className="ml-3">
+                 <div className="form-group">
                     <label htmlFor="password">Password</label>
                     <input type="password" className="form-control" id="password" name="password" value={employeefrom.password} onChange={handleAddEmp} placeholder="Enter password" required />
-                  </div>
-                  <div className="form-group">
+                 </div>
+                 <div className="form-group">
                     <label htmlFor="email">department</label>
                     <input type="text" className="form-control" id="department" name="department" value={employeefrom.department} onChange={handleAddEmp} placeholder="Enter department" required />
                   </div>
@@ -354,8 +426,7 @@ const filteredRequests = searchinput
           </form>
         </DialogContent>
       </Dialog>
-
-      <Dialog open={isOpen} onClose={closeDialog}>
+  <Dialog open={isOpen} onClose={closeDialog}>
         <DialogTitle>Change Profile</DialogTitle>
         <DialogContent>
           <div className="container">
@@ -398,10 +469,7 @@ const filteredRequests = searchinput
           </Button>
         </DialogContent>
       </Dialog>
-
-
-
-    </>
+ </>
   );
 };
 

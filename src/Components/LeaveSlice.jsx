@@ -9,8 +9,17 @@ const initialState = {
   Token:'',
   isAuthenticated:false,
   EmployeesProfile:[],
-  Notificationdata:[]
-  
+  Notificationdata:[],
+  MessageData:[],
+  ConnectionId:[],
+  Managers:[],
+  Send:[],
+  Receive:[],
+  RecentMessage:[],
+  SentMessage:[],
+  SignalRConnection:[],
+  SendBotMsgs:[],
+ 
 };
 
 const LeaveSlice = createSlice({
@@ -42,10 +51,38 @@ const LeaveSlice = createSlice({
       state.EmployeesProfile=payload;
     },
     setNotification:(state,{payload})=>{
-         state.Notificationdata=payload;
+         state.Notificationdata.push(payload);
+    },
+    setMessageData: (state, { payload }) => {
+      state.MessageData = payload; 
+    },
+ 
+    setConnectionId:(state,{payload})=>{
+      state.ConnectionId.push(payload);
+    },
+    setManagers:(state,{payload})=>{
+      state.Managers=payload;
+    },
+    setSending:(state,{payload})=>{
+      state.Send = Array.isArray(payload) ? payload : [payload];
+    },
+    setReceiving:(state,{payload})=>{
+      state.Receive=Array.isArray(payload)?payload:[payload];
+    },
+    setRecentMessage:(state,{payload})=>{
+      state.RecentMessage.push(payload);
+    },
+    setSentMessages:(state,{payload})=>{
+      state.SentMessage.push(payload)
+    },
+    setSignalRConnection:(State,{payload})=>{
+      State.SignalRConnection=payload
+    },
+    setBotMsgs:(state,{payload})=>{
+      state.SignalRConnection.push(payload);
     }
   }
 });
 
-export const { addLeaves, userDetails,LoginUser,Employeesdata ,Sidebar,TokenData,SetAuthenticated,SetEmployeesProfile,setNotification} = LeaveSlice.actions;
+export const { addLeaves,setBotMsgs,setSentMessages,setRecentMessage,setSending,setReceiving, setManagers,userDetails,LoginUser,Employeesdata,setConnectionId ,Sidebar,TokenData,SetAuthenticated,SetEmployeesProfile,setNotification,setMessageData,setSignalRConnection} = LeaveSlice.actions;
 export default LeaveSlice.reducer;

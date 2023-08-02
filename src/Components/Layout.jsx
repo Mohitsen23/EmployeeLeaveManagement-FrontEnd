@@ -11,6 +11,7 @@ import ManagerProfile from './ManagerProfile';
 import Login from './Login';
 
 import EMpProfile from './EMpProfile';
+import Chat from './Chat';
 
 
 
@@ -58,6 +59,7 @@ const isAuthenticated=useSelector((state)=>{
           <div className="main-content">
         
             <Routes>
+            <Route path="/Chat" element={<Chat />} />
             <Route path="/EmpProfile" element={<EMpProfile />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/apply" element={<ApplyLeave />} />

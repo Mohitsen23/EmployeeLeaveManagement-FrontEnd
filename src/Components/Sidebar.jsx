@@ -58,6 +58,17 @@ const handleClickRequest = (button) => {
 </NavLink>
 
 
+<NavLink
+  to="/Chat"
+  className="bg-secondary d-flex justify-content-center mt-4 p-1"
+  activeClassName="active-link"
+  onClick={() => handleClickRequest('Chat')}
+  name="Chat" // Add a unique name prop
+>
+ <span className="text-white">Chat</span> 
+</NavLink>
+
+
  </ul>}
   {users=="Employee"&&<ul class="nav flex-column">
 <li class="nav-item mt-2">

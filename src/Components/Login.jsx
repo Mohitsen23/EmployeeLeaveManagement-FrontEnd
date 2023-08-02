@@ -6,13 +6,13 @@ import {  FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import {  Dialog, DialogContent, DialogTitle } from "@mui/material";
 import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
-import {  Employeesdata, LoginUser, SetAuthenticated, SetEmployeesProfile, TokenData, setNotification, userDetails } from "./LeaveSlice";
+import {  Employeesdata, LoginUser, SetAuthenticated, SetEmployeesProfile, TokenData, setNotification, setReceiving, setSending, userDetails } from "./LeaveSlice";
 import { addLeaves } from './LeaveSlice';
 
 
 const Login = () => {
   const dispatch=useDispatch();
-  const dispatch1=useDispatch();
+ 
  const [loginotp,setLoginOTP]=useState('');
   const handleEmailSubmit=(e)=>{
   e.preventDefault();
@@ -52,27 +52,16 @@ const [otp,setOtpData]=useState('')
   const [count,setCount]=useState(30);
   const [isCounting, setIsCounting] = useState(false);
 
-
-
-
-
-
-
-useEffect(() => {
-
-
-    let interval;
-    
-    if (isCounting && count > 0) {
+     useEffect(() => {
+     let interval;
+     if (isCounting && count > 0) {
       interval = setInterval(() => {
         setCount((prevCount) => prevCount - 1);
       }, 1000);
     } else if (count === 0) {
-      setIsCounting(false); // Stop the countdown when count reaches 0
+      setIsCounting(false); 
     }
- 
-
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
   }, [isCounting,count]);
 
 
@@ -85,10 +74,9 @@ useEffect(() => {
   const [isOpen,setClosedOpen]=useState(false);
   const [isOtp ,setOtp]=useState(false);
   const [user,setUser]=useState('');
-const handleOtpClose=()=>{
-  // setOtp(!isOtp );
-  
+const handleOtpClose=()=>{  
 }
+
  const handleAgainOTP=()=>{
   setCount(30);
   setIsCounting(true); 
@@ -100,8 +88,7 @@ const handleOtpClose=()=>{
   }
   const closeOTPDialog=()=>{
     setLoginOTP(false);
-   
-  }
+   }
  
 const handleOTPSubmit=async (e)=>{
     e.preventDefault();
@@ -128,7 +115,8 @@ const handleOTPSubmit=async (e)=>{
 
           axios.post("https://localhost:7189/mgrlogindata",formData, config)
           .then((response) => {
-            console.log("response",response);
+          
+          
             dispatch(LoginUser(response.data));
           })
           .catch((error) => {
@@ -158,7 +146,7 @@ const handleOTPSubmit=async (e)=>{
           dispatch(LoginUser(response.data));
           setUser("Manager");
           setisLoggedIn(true);
-          // navigate("/layout",{state:{responseData:1}});
+        
         })
         .catch((error) => {
           console.error(error);

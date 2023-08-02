@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import {  Dialog, DialogContent } from "@mui/material";
+import { Dialog, DialogContent } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -11,23 +11,13 @@ const LeaveType = [
   "Annual Leave/Vacation Leave",
   "Sick Leave",
   "Personal Leave",
-
-
 ]
-
-
-
-
-
-
-
-
 const ApplyLeave = () => {
   const [selectedOption, setSelectedOption] = useState('Apply Leave');
 
   const dispatch = useDispatch();
   const [leaveQuota, setLeaveQuota] = useState({})
-  const [document,setDocumentData]=useState([]);
+  const [document, setDocumentData] = useState([]);
   useEffect(() => {
     const fetchLeaveQuota = async () => {
       try {
@@ -48,14 +38,14 @@ const ApplyLeave = () => {
 
     console.log("leave quota data ", leaveQuota);
 
-  axios.get("https://localhost:7189/download/Document")
-  .then((res)=>{
-    setDocumentData(res.data);
-    console.log("response data",document);
-  })
-  .catch((error)=>{
-    console.log("error",error);
-  })
+    axios.get("https://localhost:7189/download/Document")
+      .then((res) => {
+        setDocumentData(res.data);
+        console.log("response data", document);
+      })
+      .catch((error) => {
+        console.log("error", error);
+      })
   }, [document]);
 
   console.log("leangth of leaveQuota", leaveQuota);
@@ -156,16 +146,16 @@ const ApplyLeave = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    
+
     const formData = new FormData();
     formData.append('file', selectedFile);
-     axios.post(`https://localhost:7189/upload/${LoginData.id}`,formData)
-     .then((response)=>{
-  console.log("response data ",response);
-     })
-     .catch((error)=>{
-      console.log("error",error);
-     })
+    axios.post(`https://localhost:7189/upload/${LoginData.id}`, formData)
+      .then((response) => {
+        console.log("response data ", response);
+      })
+      .catch((error) => {
+        console.log("error", error);
+      })
 
   };
 
@@ -187,12 +177,12 @@ const ApplyLeave = () => {
 
     setFilteredLeaves(filteredData);
   }, [inputValue, LeaveStatus]);
-  const [isOpen,setDialog]=useState(false);
-const closeDialog=()=>{
-  setDialog(false);
-}
-  const handletoggle=()=>{
-  setDialog(true);
+  const [isOpen, setDialog] = useState(false);
+  const closeDialog = () => {
+    setDialog(false);
+  }
+  const handletoggle = () => {
+    setDialog(true);
   }
   return (
     <>
@@ -414,93 +404,93 @@ const closeDialog=()=>{
 
 
 
-<h4 className="text-center mt-3">Uploaded Documents</h4>
+          <h4 className="text-center mt-3">Uploaded Documents</h4>
 
 
-  <TableContainer>
+          <TableContainer>
 
-    {document.length>0 &&
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Emp Id</TableCell>
-            <TableCell>Doucment Name</TableCell>
-            <TableCell>File Data</TableCell>
-           
-          </TableRow>
-        </TableHead>
-        <TableBody>
+            {document.length > 0 &&
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>Emp Id</TableCell>
+                    <TableCell>Doucment Name</TableCell>
+                    <TableCell>File Data</TableCell>
 
-   {     
-  document.map((row) => (
-    row.emplid==LoginData.id ?
-    (<TableRow key={row.id}>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
 
-      <TableCell>{row.id}</TableCell>
-      <TableCell>{row.emplid}</TableCell>
-      <TableCell>{row.documentName}</TableCell>
-      <TableCell>
-       <Button variant="container" className="bg-primary text-white"> <a className="text-light" href={`data:application/octet-stream;base64,${row.file}`}>
-          Download
-        </a></Button>
-      </TableCell>
+                  {
+                    document.map((row) => (
+                      row.emplid == LoginData.id ?
+                        (<TableRow key={row.id}>
 
-
-    </TableRow>) :null
-  
-  ))
-}
+                          <TableCell>{row.id}</TableCell>
+                          <TableCell>{row.emplid}</TableCell>
+                          <TableCell>{row.documentName}</TableCell>
+                          <TableCell>
+                            <Button variant="container" className="bg-primary text-white"> <a className="text-light" href={`data:application/octet-stream;base64,${row.file}`}>
+                              Download
+                            </a></Button>
+                          </TableCell>
 
 
+                        </TableRow>) : null
+
+                    ))
+                  }
 
 
-        </TableBody>
-      </Table>
-    }
-  </TableContainer>
-
-</div>
-}
 
 
-<Dialog open={isOpen} onClose={closeDialog}  fullWidth>
+                </TableBody>
+              </Table>
+            }
+          </TableContainer>
 
-  <DialogContent>
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-md-12">
-          <div className="d-flex justify-content-end" onClick={closeDialog}><i class="fa-solid fa-xmark fa-lg"></i></div>
-          <h3 className="text-center">Send Email  </h3>
-          <form className="p-4">
-            <div className="form-group">
-              <label htmlFor="recipient">To:</label>
-              <input type="email" className="form-control" id="recipient" placeholder="Recipient" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="subject">Subject:</label>
-              <input type="text" className="form-control" id="subject" placeholder="Subject" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="message">Message:</label>
-              <textarea className="form-control" id="message" rows="6" placeholder="Enter your message"></textarea>
-            </div>
-            <div className="form-group">
-              <label htmlFor="attachment">Attachment:</label>
-              <input type="file" className="form-control-file" id="attachment" />
-            </div>
-            <div className="text-center d-flex justify-content-between">
-              <button type="submit" className="btn btn-primary mr-2" onClick={closeDialog}>
-                Send
-              </button>
-             
-            </div>
-          </form>
         </div>
-      </div>
-    </div>
-  </DialogContent>
-</Dialog>
+      }
+
+
+      <Dialog open={isOpen} onClose={closeDialog} fullWidth>
+
+        <DialogContent>
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-md-12">
+                <div className="d-flex justify-content-end" onClick={closeDialog}><i class="fa-solid fa-xmark fa-lg"></i></div>
+                <h3 className="text-center">Send Email  </h3>
+                <form className="p-4">
+                  <div className="form-group">
+                    <label htmlFor="recipient">To:</label>
+                    <input type="email" className="form-control" id="recipient" placeholder="Recipient" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="subject">Subject:</label>
+                    <input type="text" className="form-control" id="subject" placeholder="Subject" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="message">Message:</label>
+                    <textarea className="form-control" id="message" rows="6" placeholder="Enter your message"></textarea>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="attachment">Attachment:</label>
+                    <input type="file" className="form-control-file" id="attachment" />
+                  </div>
+                  <div className="text-center d-flex justify-content-between">
+                    <button type="submit" className="btn btn-primary mr-2" onClick={closeDialog}>
+                      Send
+                    </button>
+
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
 
 

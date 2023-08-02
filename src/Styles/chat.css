@@ -1,0 +1,160 @@
+
+.container-fluid .row .head-1{
+    background-color: #b1bccd;
+   
+    height: 50px;
+}
+
+.container-fluid .row .head-2{
+    background-color: #b1bccd;
+    
+    height: 50px;
+}
+.container-fluid .row  .icondata .icon{
+    font-size: 18px;
+ color: crimson;
+ margin-top: 9px;
+   
+
+}
+ .search{
+    background-color: rgb(222, 222, 222);
+    height: 25px;
+    border-radius: 10px;
+    border-color: crimson;
+   
+   
+ }
+ .name{
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+ }
+
+.img{
+    width: 25px;
+}
+.side{
+  
+    border-radius: 1px;
+    background-color: #b1bccd;
+    min-height: 520px;
+}
+.User {
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+
+.userprofile{
+    margin-top: 5px;
+    font-size: 23px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.main{
+    background-color: rgb(211, 207, 207);
+    border-radius: 3px;
+}
+.User .name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+  }
+  .User img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    
+  }
+
+  .User .onlinestatus {
+   
+   width: 15px;
+   height: 15px;
+    
+  }
+
+  .userimg{
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+  }
+  .send{
+    margin-bottom: 10px;
+    width: 100%;
+    background-color: rgb(222, 222, 222);
+    height: 35px;
+    border-radius: 10px;
+    border-color: crimson;
+   
+  }
+  .message{
+   
+  }
+
+  .messagediv .receivingbox{
+    border-radius: 16px;
+    background-color: rgb(20, 187, 220);
+       color: white;
+      
+       padding: 7px;
+  }
+
+.messagediv .sendingbox{
+    border-radius: 16px;
+    background-color: crimson;
+       color: white;
+      
+       padding: 7px;
+}
+
+.sendingimg{
+  width: 200px;
+}
+
+.messagediv{
+   margin-bottom: 40px; 
+    margin-left: 10px;
+}
+.cameraicon i{
+  font-size: 30px;
+  margin-top: 14px;
+  color: crimson;
+}
+  .receiver-box{
+    border-radius: 16px;
+    background-color: rgb(20, 150, 220);
+       color: white;
+    margin-right: 70px;
+       padding: 7px;
+  }
+  .cursor{
+    cursor: pointer;
+  }
+   .sendmsg{
+    font-size: 20px;
+  }
+  
+  .messagebox{
+      
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 30px;
+    position: fixed;
+  bottom: 0;
+    
+  }
+  .messagebox .sendmsg{
+    width: 30px;
+    height: 30px;
+    margin-top: 14px;
+    margin-left: 3px;
+  }
