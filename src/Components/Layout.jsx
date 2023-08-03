@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import ManagerProfile from './ManagerProfile';
 import Login from './Login';
 
-import EMpProfile from './EMpProfile';
 import Chat from './Chat';
 
 
@@ -60,7 +59,7 @@ const isAuthenticated=useSelector((state)=>{
         
             <Routes>
             <Route path="/Chat" element={<Chat />} />
-            <Route path="/EmpProfile" element={<EMpProfile />} />
+         
               <Route path="/profile" element={<Profile />} />
               <Route path="/apply" element={<ApplyLeave />} />
               <Route path="/leaveRequest" element={<LeaveRequest />} />
@@ -68,10 +67,7 @@ const isAuthenticated=useSelector((state)=>{
               <Route path="/managerProfile" element={<ManagerProfile />} />
              
               </Routes>
-             
-             
-             
-          </div>
+         </div>
         </div>
       </div>
     </div>

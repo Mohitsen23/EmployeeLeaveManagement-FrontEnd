@@ -79,7 +79,7 @@ const LeaveSlice = createSlice({
       State.SignalRConnection=payload
     },
     setBotMsgs:(state,{payload})=>{
-      state.SignalRConnection.push(payload);
+      state.SendBotMsgs.push(payload);
     }
   }
 });

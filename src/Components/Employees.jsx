@@ -98,7 +98,7 @@ const Employees = () => {
       dispatch(Employeesdata(updatedEmployeeList));
     }
   };
-const [chaticon,setchaticon]=useState(false);
+  const [chaticon, setchaticon] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -133,9 +133,9 @@ const [chaticon,setchaticon]=useState(false);
     }
 
   };
-const handlechatbot=()=>{
-  setchaticon(!chaticon);
-}
+  const handlechatbot = () => {
+    setchaticon(!chaticon);
+  }
   const handleAllEmployee = () => {
     SetProfile(false);
     dispatch(Employeesdata(employeedata));
@@ -176,7 +176,7 @@ const handlechatbot=()=>{
 
     };
   });
- 
+
   const [chat, setChat] = useState({
     message: ""
   })
@@ -184,32 +184,37 @@ const handlechatbot=()=>{
   useEffect(() => {
 
     connectionRef.current = new HubConnectionBuilder()
-    .withUrl("https://localhost:7189/notificationHub", {
-     
-      skipNegotiation: true,
-      transport: HttpTransportType.WebSockets
+      .withUrl("https://localhost:7189/notificationHub", {
+
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets
+      })
+      .configureLogging(LogLevel.Trace)
+      .withAutomaticReconnect()
+      .build();
+
+    connectionRef.current
+      .start()
+      .then(() => console.log("SignalR Connected"))
+      .catch((err) => console.log("SignalR Connection Error: ", err));
+    connectionRef.current.on("Connected", (connectionid, userid) => {
+
+      dispatch(setConnectionId(userid));
     })
-    .configureLogging(LogLevel.Trace)
-    .withAutomaticReconnect()
-    .build();
-  
-  connectionRef.current
-    .start()
-    .then(() => console.log("SignalR Connected"))
-    .catch((err) => console.log("SignalR Connection Error: ", err));
-  connectionRef.current.on("Connected", (connectionid, userid) => {
-
-    dispatch(setConnectionId(userid));
-  })
 
 
-  connectionRef.current.on("ReceiveBotMessage", (response) => {
-      dispatch(setNotification([response]));
+    connectionRef.current.on("ReceiveBotMessage", (response) => {
+      const msg = {
+        data: response,
+        type: "receive",
+        currentTime: new Date().toString(),
+      }
+      dispatch(setNotification(msg));
     });
   }, [])
-const sendmsgs=useSelector((state)=>{
-  return state.leave.SendBotMsgs;
-}) 
+  const sendmsgs = useSelector((state) => {
+    return state.leave.SendBotMsgs;
+  })
   const handlechat = (e) => {
     setChat(e.target.value);
   }
@@ -218,13 +223,26 @@ const sendmsgs=useSelector((state)=>{
   })
   const sendmsgtochatbot = () => {
     connectionRef.current.invoke("SendMessagetoBot", chat).catch((error) => console.error(error));
-    dispatch(setBotMsgs(chat));
+    const mgs = {
+      data: chat,
+      type: "send",
+      currentTime: new Date().toString()
+    }
+    dispatch(setBotMsgs(mgs));
     setChat("");
+
   }
   console.log("combine data", combinedData);
-  const handlecancel=()=>{
+  const handlecancel = () => {
     setchaticon(!chaticon);
   }
+  const msgs = [...sendmsgs, ...notification];
+  console.log("msgs", msgs);
+  const sortedMessage = () => {
+    return [...msgs].sort((a, b) => new Date(a.currentTime) - new Date(b.currentTime));
+  }
+  const sortdata = sortedMessage();
+  console.log("sorted messages", sortedMessage);
   return (
     <>
       <div className="container-fluid position-absolute">
@@ -240,26 +258,26 @@ const sendmsgs=useSelector((state)=>{
           </div>
           <FormControl fullWidth className="w-25">
             <InputLabel id='demo-simple-select-label'>Select</InputLabel>
-             <Select
+            <Select
               labelId='demo-simple-select-label'
               id='demo-simple-select'
               label='leavetype'
               value={employee}
               onChange={handleEmployeeChange}>
               <MenuItem value="All Employees" className="ml-5">All Employees</MenuItem>
-              <hr/>
+              <hr />
               <MenuItem value="My Employee" className="ml-5">My Employee</MenuItem> <hr></hr>
               <div className="d-flex justify-content-end mt-2">
-              <Button className="text-center  text-white border border-1 border-primary text-primary" onClick={handleEmployeeProfile}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
+                <Button className="text-center  text-white border border-1 border-primary text-primary" onClick={handleEmployeeProfile}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
               </div>
-              </Select>
+            </Select>
           </FormControl>
         </div>
         {isProfile ? (
           <div className="row">
             {employprofile && employprofile.length > 0 ? (
               combinedData.map((data) => (
-               <div className="col-lg-4 col-md-4 col-sm-6 mt-5">
+                <div className="col-lg-4 col-md-4 col-sm-6 mt-5">
                   <Card sx={{ maxWidth: 345 }} key={data.id} className=" border border-5 border-primary ml-3" style={{ borderRadius: "15px" }}>
                     <img src={`data:image/png;base64,${data.img}`} alt="Employee Profile" className="card-img-top" style={{ objectFit: "cover", height: "200px", borderRadius: "15px 15px 0 0" }} />
                     <CardContent>
@@ -285,7 +303,7 @@ const sendmsgs=useSelector((state)=>{
             )}
           </div>
         ) : (
-            <div className="row mt-3">
+          <div className="row mt-3">
             <TableContainer >
               <Table>
                 <TableHead>
@@ -327,61 +345,59 @@ const sendmsgs=useSelector((state)=>{
           </div>
         )
         }
-  </div>
+      </div>
 
-   <div className={` ${
-            chaticon ? 'position-relative  chatfix' : 'position-relative chatbot'
-          }`}>
+      <div className={` ${chaticon ? 'position-relative  chatfix' : 'position-relative chatbot'
+        }`}>
         {
           chaticon && <div className=" d-flex justify-content-end ">
             <div className="chatdiv ">
-             <div className="d-flex justify-content-end"> <i class="fa-regular fa-circle-xmark" onClick={handlecancel}></i></div>
-            <h5 className="text-center">Chat Bot</h5>
-           {notification && notification.map((item,index)=>{
-           return( <div key={index}>{item} </div>);
-           })
-            
-           } 
+              <div className="d-flex justify-content-end"> <i class="fa-regular fa-circle-xmark" onClick={handlecancel}></i></div>
+              <h5 className="text-center">Chat Bot</h5>
+               {sortdata && sortdata.map((item, index) => {
+                return (<div key={index} className="m-2">
+                  {
+                    item.type == "send" && <div className=""><span className="bg-primary border p-1 rounded text-white">{item.data}</span>   </div>
+                  }
+                  {
+                    item.type === "receive" && (
+                      <div className="d-flex justify-content-end">
+                        <span className="p-1 bg-secondary text-white border rounded ">
+                          {item.data === "employee" ? (
+                            EmployeeList.map((item, index) => (
+                              <div key={index} >
+                               <span > {item.firstname}</span>
+                              </div>
+                            ))
+                          ) : (
+                            item.data === "details" ? ( LoginData.email):(
+                              item.data
+                            )
+                          )}
 
+                        </span>
+                      </div>
+                    )
+                  }
+                </div>);
+              })
+              }
 
-        {sendmsgs && sendmsgs.map((item,index)=>{
-           return( <div key={index}>{item} </div>);
-           })
-            
-           } 
-
-
-            <div className="d-flex justify-content-center">
-            <input type="text" value={chat.message} className="border rounded border-5 border-primary " onChange={handlechat}></input>
-          <button onClick={sendmsgtochatbot} className="border rounded border-5 border-primary">send</button></div>
+              <div className="d-flex justify-content-center shadow-lg p-1 ">
+                <input type="text" value={chat.message} className="border rounded border-5 border-primary " onChange={handlechat} placeholder="Ask to Bot"></input>
+                <button onClick={sendmsgtochatbot} className="border rounded border-5 border-primary">send</button></div>
+            </div>
           </div>
-          </div>
-         
-
         }
-      {!chaticon &&  <div className="d-flex justify-content-end"> 
-      
+        {!chaticon && <div className="d-flex justify-content-end">
           <span onClick={handlechatbot}>
-          <img src={robot} className="bot" alt="" />
+            <img src={robot} className="bot" alt="" />
           </span>
-         </div>
-}
-
-   </div>
-
-
-          {/* <div className="d-flex justify-content-end  ">
-           {chaticon &&  <span className="chatbox">
-          a<h5 className="text-white text-center">Chat Bot</h5>
-
-          <div> </div>
-       
-          
-         
-          </div> */}
+        </div>
+        }      </div>
       <Dialog open={isOpened} onClose={closedDialog}>
         <DialogTitle>Add Employee</DialogTitle>
-          <DialogContent>
+        <DialogContent>
           <form onSubmit={handleAddEmployee}>
             <div className="container">
               <div className="d-flex">
@@ -389,22 +405,22 @@ const sendmsgs=useSelector((state)=>{
                   <div className="form-group">
                     <label htmlFor="firstname">First Name</label>
                     <input type="text" className="form-control" id="firstname" name="firstname" value={employeefrom.firstname} onChange={handleAddEmp} placeholder="Enter first name" required />
-                    </div>
-                    <div className="form-group">
+                  </div>
+                  <div className="form-group">
                     <label htmlFor="lastname">Last Name</label>
                     <input type="text" className="form-control" id="lastname" name="lastname" value={employeefrom.lastname} onChange={handleAddEmp} placeholder="Enter last name" required />
-                    </div>
-                    <div className="form-group">
+                  </div>
+                  <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input type="email" className="form-control" id="email" name="email" value={employeefrom.email} onChange={handleAddEmp} placeholder="Enter email" required />
-                    </div>
-                    </div>
-                 <div className="ml-3">
-                 <div className="form-group">
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <div className="form-group">
                     <label htmlFor="password">Password</label>
                     <input type="password" className="form-control" id="password" name="password" value={employeefrom.password} onChange={handleAddEmp} placeholder="Enter password" required />
-                 </div>
-                 <div className="form-group">
+                  </div>
+                  <div className="form-group">
                     <label htmlFor="email">department</label>
                     <input type="text" className="form-control" id="department" name="department" value={employeefrom.department} onChange={handleAddEmp} placeholder="Enter department" required />
                   </div>
@@ -426,7 +442,7 @@ const sendmsgs=useSelector((state)=>{
           </form>
         </DialogContent>
       </Dialog>
-  <Dialog open={isOpen} onClose={closeDialog}>
+      <Dialog open={isOpen} onClose={closeDialog}>
         <DialogTitle>Change Profile</DialogTitle>
         <DialogContent>
           <div className="container">
@@ -469,7 +485,7 @@ const sendmsgs=useSelector((state)=>{
           </Button>
         </DialogContent>
       </Dialog>
- </>
+    </>
   );
 };
 
