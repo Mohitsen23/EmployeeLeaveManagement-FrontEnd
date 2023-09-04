@@ -17,6 +17,7 @@ import { HttpTransportType, HubConnectionBuilder, LogLevel } from "@microsoft/si
 const Employees = () => {
   const dispatch = useDispatch();
   const EmployeeList = useSelector(state => state.leave.EmployeesDetails);
+ 
   const LoginData = useSelector(state => state.leave.LoginUser);
   const employprofile = useSelector(state =>
     state.leave.EmployeesProfile);
@@ -154,22 +155,21 @@ const Employees = () => {
   const handleSearch = (event) => {
     setSearchInput(event.target.value);
   }
-  const filteredRequests = searchinput
-    ? EmployeeList.filter((row) => {
-      const searchValue = searchinput.toLowerCase();
-      return Object.values(row).some((value) =>
 
-        value && value.toString().toLowerCase().includes(searchValue)
-      );
-    })
-    : EmployeeList;
+const filteredRequests =searchinput ? EmployeeList.filter((row)=>{
+        const searchvalue=searchinput.toLocaleLowerCase();
+        return Object.values(row).some((value)=>
+        value && value.toString().toLowerCase().includes(searchvalue)
+        );
+}):EmployeeList;
 
-  const employeeMap = EmployeeList.reduce((map, employee) => {
+ const employeeMap = EmployeeList.reduce((map, employee) => {
     map[employee.id] = employee;
     return map;
   }, {});
 
-  const combinedData = employprofile.map((profile) => {
+
+ const combinedData = employprofile.map((profile) => {
     const employeeData = employeeMap[profile.emplid];
     return {
       ...profile, ...employeeData
@@ -182,8 +182,7 @@ const Employees = () => {
   })
   const connectionRef = useRef(null);
   useEffect(() => {
-
-    connectionRef.current = new HubConnectionBuilder()
+ connectionRef.current = new HubConnectionBuilder()
       .withUrl("https://localhost:7189/notificationHub", {
 
         skipNegotiation: true,
@@ -242,21 +241,56 @@ const Employees = () => {
     return [...msgs].sort((a, b) => new Date(a.currentTime) - new Date(b.currentTime));
   }
   const sortdata = sortedMessage();
-  console.log("sorted messages", sortedMessage);
-  return (
+
+const functions = [x => x + 1, x => x * x, x => 2 * x];
+  console.log(functions.forEach((data)=>{
+    console.log(data);
+  }))
+  const CountryList = [
+    {
+      id: 1, country: "India", capital: "Delhi"
+    },
+    {
+      id: 2, country: "Pakistan", capital: "Islamabad"
+    },
+    {
+      id: 3, country: "China", capital: "Beijing"
+    }
+  ];
+const [countryId,setcountryId]=useState();
+const handleSelectedCountry =(event)=>{
+  const contId=parseInt(event.target.value);
+  const capitalcountry=CountryList.filter((item)=>{
+   return item.id===contId;
+  })
+  setcountryId(capitalcountry);
+}
+return (
     <>
-      <div className="container-fluid position-absolute">
-        <div className="d-flex justify-content-center">
-          <h4 className="text-center mt-2">Employees Profile</h4>
-        </div>
-        <div className="d-flex justify-content-between">
+         <div className="container-fluid position-absolute">
+         <div className="d-flex justify-content-center">
+          <h4 className="text-center mt-2">Employees Profile
+           <select  onChange={handleSelectedCountry}>
+           <option value="">Select a country</option>
+           {CountryList.map((item, index) => (
+            <option key={index} value={item.id}>
+            {item.country}
+            </option>
+             ))}
+
+            </select>
+            { countryId!=null && 
+             <span>   { countryId[0].capital}</span>}</h4>
+         </div>
+          <div className="d-flex justify-content-between">
           <div className="d-flex justify-content-end mt-2">
             <Button className="text-center  text-white border border-1 border-primary text-primary" onClick={openedDialog}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
           </div>
           <div className="d-flex justify-content-end mt-2">
             <input placeholder="Search" value={searchinput} onChange={handleSearch} className="mt-2 border border-4 border-primary rounded mr-3" />
           </div>
-          <FormControl fullWidth className="w-25">
+          
+           <FormControl fullWidth className="w-25">
             <InputLabel id='demo-simple-select-label'>Select</InputLabel>
             <Select
               labelId='demo-simple-select-label'
@@ -271,7 +305,7 @@ const Employees = () => {
                 <Button className="text-center  text-white border border-1 border-primary text-primary" onClick={handleEmployeeProfile}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
               </div>
             </Select>
-          </FormControl>
+          </FormControl> 
         </div>
         {isProfile ? (
           <div className="row">
@@ -303,7 +337,7 @@ const Employees = () => {
             )}
           </div>
         ) : (
-          <div className="row mt-3">
+           <div className="row mt-3">
             <TableContainer >
               <Table>
                 <TableHead>
@@ -346,8 +380,7 @@ const Employees = () => {
         )
         }
       </div>
-
-      <div className={` ${chaticon ? 'position-relative  chatfix' : 'position-relative chatbot'
+    <div className={` ${chaticon ? 'position-relative  chatfix' : 'position-relative chatbot'
         }`}>
         {
           chaticon && <div className=" d-flex justify-content-end ">
@@ -357,7 +390,7 @@ const Employees = () => {
                {sortdata && sortdata.map((item, index) => {
                 return (<div key={index} className="m-2">
                   {
-                    item.type == "send" && <div className=""><span className="bg-primary border p-1 rounded text-white">{item.data}</span>   </div>
+                    item.type === "send" && <div className=""><span className="bg-primary border p-1 rounded text-white">{item.data}</span>   </div>
                   }
                   {
                     item.type === "receive" && (
@@ -382,8 +415,7 @@ const Employees = () => {
                 </div>);
               })
               }
-
-              <div className="d-flex justify-content-center shadow-lg p-1 ">
+             <div className="d-flex justify-content-center shadow-lg p-1 ">
                 <input type="text" value={chat.message} className="border rounded border-5 border-primary " onChange={handlechat} placeholder="Ask to Bot"></input>
                 <button onClick={sendmsgtochatbot} className="border rounded border-5 border-primary">send</button></div>
             </div>

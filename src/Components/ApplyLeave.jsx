@@ -160,7 +160,7 @@ const ApplyLeave = () => {
   };
 
 
-  const [filteredLeaves, setFilteredLeaves] = useState([]);
+ 
   const handleinputChange = (event) => {
     const searchValue = event.target.value;
     setInputValue(searchValue);
@@ -175,7 +175,7 @@ const ApplyLeave = () => {
       })
     );
 
-    setFilteredLeaves(filteredData);
+  
   }, [inputValue, LeaveStatus]);
   const [isOpen, setDialog] = useState(false);
   const closeDialog = () => {

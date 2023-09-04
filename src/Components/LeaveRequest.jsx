@@ -25,7 +25,7 @@ const config = {
   const getStatusColor = (status) => {
     if (status === 'pending                                           ' || status === 'pending') {
       return 'bg-warning';
-    } else if (status === 'Rejected                      ' || status === 'Rejected') {
+    } else if (status ==="Rejected                                          " || status === 'Rejected') {
       return 'bg-danger';
     } else {
       return 'bg-success';
@@ -71,8 +71,25 @@ const filteredRequests = searchInput
     })
   : leaveRequest;
 
-console.log("filtered manager, logindata request manager",filteredRequests,LoginData);
 
+const itemsperpage=20;
+
+const [currentPage,setCurrentPage]=useState(1);
+
+const totalPages=Math.ceil(filteredRequests.length / itemsperpage);
+const startingIndex=(currentPage-1) * itemsperpage;
+const endIndex = startingIndex + itemsperpage;
+  const currentData = filteredRequests.slice(startingIndex, endIndex);
+console.log("currentData",currentData);
+const handlePrevious=()=>{
+  setCurrentPage(currentPage-1);
+}
+const handleNextPage=()=>{
+  setCurrentPage(currentPage+1);
+}
+const handleClickOnPages=(data)=>{
+  setCurrentPage(data);
+}
   return (
     <>
       <div className="container">
@@ -97,9 +114,10 @@ console.log("filtered manager, logindata request manager",filteredRequests,Login
              <TableBody>
                 
              
-  {filteredRequests.map((row) => (
+  {currentData.map((row,index) => (
     row.manager === LoginData.id ? (
       <TableRow key={row.id}>
+       
         <TableCell>{row.id}</TableCell>
         <TableCell>{row.emplid}</TableCell>
         <TableCell>{row.leavetype}</TableCell>
@@ -116,7 +134,22 @@ console.log("filtered manager, logindata request manager",filteredRequests,Login
       </TableRow>
     ) : null
   ))}
+ 
 </TableBody>
+
+  </Table>
+  <Table className="mt-4">
+  <TableRow className="d-flex" > 
+    <Button onClick={handlePrevious} disabled={currentPage===1}>  Previous</Button>
+    {
+      Array.from({length:totalPages}).map((data,index)=>{
+        return(
+        <Button onClick={()=>{handleClickOnPages(index+1)}} key={index}>{index+1}</Button>
+        )
+      })
+    }
+    <Button onClick={handleNextPage} disabled={currentPage===totalPages}>Next</Button>
+        </TableRow>
   </Table>
           </TableContainer>
         </div>
