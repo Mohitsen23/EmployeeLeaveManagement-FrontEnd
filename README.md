@@ -1,4 +1,43 @@
-# Getting Started with Create React App
+
+# Employee Leave Management System
+
+## Overview
+
+The Employee Leave Management System is a comprehensive web-based application designed to simplify and automate the leave management process within an organization. It provides a robust platform for employees to request leave, enables managers to efficiently review and manage leave requests. 
+
+## Features
+
+- **User Roles:**
+  - Employee
+  - Manager
+  - Admin
+
+- **Employee Features:**
+  - Submit leave requests
+  - View leave history and balances
+  - Receive email notifications on leave request status
+    
+
+- **Manager Features:**
+  - Approve or reject leave requests
+  - View team members' leave calendars
+  - Generate leave reports
+  - Managers can chat one to one
+    
+## Technology Stack
+
+- **Frontend:**
+  - React.js
+  - Redux for state management
+  - Axios for API requests
+
+### Steps
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/employee-leave-management.git
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
