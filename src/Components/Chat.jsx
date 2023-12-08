@@ -58,7 +58,7 @@ const Chat = () => {
   const sortmsgdata = recentsort();
   console.log("recenet messages ", sortmsgdata);
   useEffect(() => {
-    axios.get("https://localhost:7189/getManagers")
+    axios.get("https://localhost:6260/getManagers")
       .then((res) => {
         dispatch(setManagers(res.data));
       })
@@ -66,7 +66,7 @@ const Chat = () => {
 
       })
     // connectionRef.current = new HubConnectionBuilder()
-    //   .withUrl("https://localhost:7189/notificationHub", {
+    //   .withUrl("https://localhost:6260/notificationHub", {
     //     accessTokenFactory: () => token,
     //     skipNegotiation: true,
     //     transport: HttpTransportType.WebSockets
@@ -146,7 +146,7 @@ const Chat = () => {
       currentTime: new Date().toString(),
     }
     dispatch(setSentMessages(msg));
-    axios.post("https://localhost:7189/SendMessage", data)
+    axios.post("https://localhost:6260/SendMessage", data)
       .then((res) => {
       })
       .catch((error) => {

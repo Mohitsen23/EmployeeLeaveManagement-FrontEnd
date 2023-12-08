@@ -18,6 +18,7 @@ const handleClickRequest = (button) => {
 };
 
       const users = useSelector(state => {
+        console.log(state)
   
             return state.leave.User;
           });
@@ -28,7 +29,7 @@ const handleClickRequest = (button) => {
     return (
 <>
 
-<div class="container-fluid" style={{height:'590px'}}>
+<div class="container-fluid" style={{height:'85.8vh'}}>
     <div class="row d-flex justify-content-center">
   
        { users=="Manager"&&  <ul class="nav flex-column w-100">

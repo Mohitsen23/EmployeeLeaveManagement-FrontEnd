@@ -8,16 +8,17 @@ import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
 import {  Employeesdata, LoginUser, SetAuthenticated, SetEmployeesProfile, TokenData, setNotification, setReceiving, setSending, userDetails } from "./LeaveSlice";
 import { addLeaves } from './LeaveSlice';
-
+import Cookies from "js-cookie";
+import Loading from "./Loading";
 
 const Login = () => {
   const dispatch=useDispatch();
- 
+  const [loading, setLoading] = useState(true);
  const [loginotp,setLoginOTP]=useState('');
   const handleEmailSubmit=(e)=>{
   e.preventDefault();
  
-   axios.post(`https://localhost:7189/generateOTP/${formData.email}`)
+   axios.post(`https://localhost:6260/generateOTP/${formData.email}`)
    .then((res)=>{
     setLoginOTP(res.data);
     dispatch(userDetails("Employee"));
@@ -100,11 +101,11 @@ const handleOTPSubmit=async (e)=>{
   
     if (selectedRole === "Manager") {
       console.log("formdata manager", formData);
-      axios.post("https://localhost:7189/mgrlogin", formData)
+      axios.post("https://localhost:6260/mgrlogin", formData)
         .then((response) => {
           dispatch(SetAuthenticated(true));
           dispatch(TokenData(response.data));
-         
+          Cookies.set('lmToken',response.data,{expires : 7})
           
           const config = {
             headers: {
@@ -113,18 +114,19 @@ const handleOTPSubmit=async (e)=>{
             }
           };
 
-          axios.post("https://localhost:7189/mgrlogindata",formData, config)
+          axios.post("https://localhost:6260/mgrlogindata",formData, config)
           .then((response) => {
           
           
             dispatch(LoginUser(response.data));
+            Cookies.set('lmUserType', 'Manager')
           })
           .catch((error) => {
             console.error(error);
           });
 
 
-          axios.get("https://localhost:7189/download/Profile")
+          axios.get("https://localhost:6260/download/Profile")
           .then((res)=>{
            dispatch(SetEmployeesProfile(res.data));
             console.log("profile response",res);
@@ -133,7 +135,7 @@ const handleOTPSubmit=async (e)=>{
             console.log("error",error);
           })
 
-          axios.get("https://localhost:7189/leaveRequest", config)
+          axios.get("https://localhost:6260/leaveRequest", config)
           .then((response) => {
             
             dispatch(addLeaves(response.data));
@@ -152,7 +154,7 @@ const handleOTPSubmit=async (e)=>{
           console.error(error);
         });
     } else {
-      axios.post("https://localhost:7189/emplogin", formData)
+      axios.post("https://localhost:6260/emplogin", formData)
         .then((response) => {
           console.log("Employee", response);
           dispatch(LoginUser(response.data));
@@ -169,7 +171,7 @@ const handleOTPSubmit=async (e)=>{
 
     
   
-    axios.get("https://localhost:7189/getEmployees")
+    axios.get("https://localhost:6260/getEmployees")
       .then((responsedata) => {
         dispatch(Employeesdata(responsedata.data));
    
@@ -190,6 +192,23 @@ const openOTp=()=>{
   setOtp(true);
   setIsCounting(true);
 }
+useEffect (()=>{
+  if(Cookies.get('lmToken')){
+    loginWithToken();
+  }
+
+},[])
+const loginWithToken = () =>{
+  
+  setTimeout(()=>{
+    setisLoggedIn(true)
+    dispatch(userDetails(Cookies.get('lmUserType'))) 
+    setLoading(false)
+  },1000)  
+
+
+}
+
 
 console.log("generated otp,enter otp",otp,loginotp);
   return (
@@ -199,7 +218,7 @@ console.log("generated otp,enter otp",otp,loginotp);
 {loginotp==otp && isLoggedIn ?
               (
                 <Layout user={user}/>
-              ):
+              ): loading  ? (<Loading/>):
 (
       <section className="vh-100 d-flex align-item-center justify-content-center">
         <div className="container-fluid h-custom">

@@ -3,6 +3,7 @@ import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRo
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addLeaves } from "./LeaveSlice";
+import Cookies from "js-cookie";
 
 const LeaveRequest = () => {
 
@@ -16,9 +17,17 @@ const tokendata=useSelector((state)=>{
 })
 const config = {
   headers: {
-    'Authorization': `Bearer ${tokendata}`
+    'Authorization': `Bearer ${Cookies.get('lmToken')}`
   }
 };
+    axios.get("https://localhost:6260/leaveRequest", config)
+    .then((response) => {
+      
+      dispatch(addLeaves(response.data));
+    })
+    .catch((error) => {
+      console.error(error);
+    });
   const [searchInput, setSearchInput] = useState('');
   const leaveRequest = useSelector(state => state.leave.Leave);
 
@@ -38,7 +47,7 @@ const config = {
   const handleRejected = (id) => {
     const updatedRequest = leaveRequest.map((data) => {
       if (data.leaveid == id) {
-        axios.get(`https://localhost:7189/RejectLeaveRequest/${data.leaveid}`,config);
+        axios.get(`https://localhost:6260/RejectLeaveRequest/${data.leaveid}`,config);
         return { ...data, status: 'Rejected' };
       }
       return data;
@@ -49,7 +58,7 @@ const config = {
   const handleAcceptRequest = (id) => {
     const updatedRequest = leaveRequest.map((data) => {
       if (data.leaveid === id) {
-        axios.get(`https://localhost:7189/ChangeLeaveStatus/${data.leaveid}`,config);
+        axios.get(`https://localhost:6260/ChangeLeaveStatus/${data.leaveid}`,config);
         return { ...data, status: 'Approved' };
       }
       return data;

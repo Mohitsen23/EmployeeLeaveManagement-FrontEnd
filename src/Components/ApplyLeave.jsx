@@ -21,7 +21,7 @@ const ApplyLeave = () => {
   useEffect(() => {
     const fetchLeaveQuota = async () => {
       try {
-        const response = await axios.get(`https://localhost:7189/leaveQuota/${1}`);
+        const response = await axios.get(`https://localhost:6260/leaveQuota/${1}`);
         console.log("repsosddsf", response);
         setLeaveQuota(response.data);
 
@@ -38,7 +38,7 @@ const ApplyLeave = () => {
 
     console.log("leave quota data ", leaveQuota);
 
-    axios.get("https://localhost:7189/download/Document")
+    axios.get("https://localhost:6260/download/Document")
       .then((res) => {
         setDocumentData(res.data);
         console.log("response data", document);
@@ -51,7 +51,7 @@ const ApplyLeave = () => {
   console.log("leangth of leaveQuota", leaveQuota);
   const handleDelete = (id) => {
     const updatedLeaves = LeaveStatus.filter(data => data.id !== id);
-    const response = axios.delete(`https://localhost:7189/deleteLeave/${id}`)
+    const response = axios.delete(`https://localhost:6260/deleteLeave/${id}`)
     dispatch(addLeaves(updatedLeaves));
 
   }
@@ -131,7 +131,7 @@ const ApplyLeave = () => {
     outputObject.manager = LoginData.manager;
     outputObject.leave.id = LoginData.id;
     outputObject.leave.employeeid = LoginData.id;
-    const response = await axios.post("https://localhost:7189/applyleave", outputObject,);
+    const response = await axios.post("https://localhost:6260/applyleave", outputObject,);
     dispatch(addLeaves([...LeaveStatus, response.data]));
 
   };
@@ -149,7 +149,7 @@ const ApplyLeave = () => {
 
     const formData = new FormData();
     formData.append('file', selectedFile);
-    axios.post(`https://localhost:7189/upload/${LoginData.id}`, formData)
+    axios.post(`https://localhost:6260/upload/${LoginData.id}`, formData)
       .then((response) => {
         console.log("response data ", response);
       })

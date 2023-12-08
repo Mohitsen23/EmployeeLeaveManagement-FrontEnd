@@ -22,11 +22,23 @@ const Employees = () => {
   const employprofile = useSelector(state =>
     state.leave.EmployeesProfile);
 
+    useEffect(()=>{
+      axios.get("https://localhost:6260/getEmployees")
+      .then((responsedata) => {
+        dispatch(Employeesdata(responsedata.data));
+   
+       
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    },[])
+
   const handleRemove = (user) => {
     const updatedEmployee = EmployeeList.filter(data =>
       data.email !== user);
     dispatch(Employeesdata(updatedEmployee));
-    const response = axios.delete(`https://localhost:7189/deleteEmployee/${user}`)
+    const response = axios.delete(`https://localhost:6260/deleteEmployee/${user}`)
     console.log("updated employee", updatedEmployee);
   };
   const [employeeProfile, setEmployeeProfile] = useState([]);
@@ -83,7 +95,7 @@ const Employees = () => {
     const updatedEmployeeIndex = EmployeeList.findIndex(employee => employee.id === updateUser.id);
 
     try {
-      const response = await axios.put(`https://localhost:7189/updateEmployee/${updateUser.id}`, updateUser);
+      const response = await axios.put(`https://localhost:6260/updateEmployee/${updateUser.id}`, updateUser);
       Swal.fire(
         'Employee Updated',
         'success'
@@ -118,7 +130,7 @@ const Employees = () => {
 
   const handleAddEmployee = async (e) => {
     e.preventDefault();
-    const response = await axios.post("https://localhost:7189/empsignup", employeefrom);
+    const response = await axios.post("https://localhost:6260/empsignup", employeefrom);
     dispatch(Employeesdata([...EmployeeList, response?.data]));
     console.log("response data", response);
   };
@@ -183,7 +195,7 @@ const filteredRequests =searchinput ? EmployeeList.filter((row)=>{
   const connectionRef = useRef(null);
   useEffect(() => {
  connectionRef.current = new HubConnectionBuilder()
-      .withUrl("https://localhost:7189/notificationHub", {
+      .withUrl("https://localhost:6260/notificationHub", {
 
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets

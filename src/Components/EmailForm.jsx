@@ -16,7 +16,7 @@ const EmailForm = () => {
     };
   console.log("email data",emailData)
     axios
-      .post("https://localhost:7189/sendEmail",emailData)
+      .post("https://localhost:6260/sendEmail",emailData)
       .then((response) => {
         if (response.status === 200) {
           alert('Email sent successfully!');
