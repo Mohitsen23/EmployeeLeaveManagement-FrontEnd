@@ -11,13 +11,20 @@ import Swal from "sweetalert2";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+import like2 from '../Assets/like2.png';
+import like from '../Assets/like.png';
+import heart from '../Assets/heart.png';
+import laughing from '../Assets/laughing.png';
+import angry from '../Assets/angry.png';
+
 import Typography from '@mui/material/Typography';
 import { HttpTransportType, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+
 
 const Employees = () => {
   const dispatch = useDispatch();
   const EmployeeList = useSelector(state => state.leave.EmployeesDetails);
- 
+
   const LoginData = useSelector(state => state.leave.LoginUser);
   const employprofile = useSelector(state =>
     state.leave.EmployeesProfile);
@@ -59,19 +66,15 @@ const Employees = () => {
     status: '',
     password: '',
     manager: '',
+    skills: []
   });
 
   const [employee, setEmployee] = useState('All Employees');
-
-
-  const handleUpdate = () => {
-
-  };
-
-  const [isOpen, setIsOpen] = useState(false);
+const handleUpdate = () => {
+};
+ const [isOpen, setIsOpen] = useState(false);
   const [updateUser, setUpdateUser] = useState({});
-
-  const openDialog = (id) => {
+const openDialog = (id) => {
     const updateUserData = EmployeeList.find(data => data.id === id);
     setUpdateUser(updateUserData);
     setIsOpen(true);
@@ -82,7 +85,7 @@ const Employees = () => {
   };
 
   const [isOpened, setIsOpened] = useState(false);
-
+  
   const openedDialog = () => {
     setIsOpened(true);
   };
@@ -90,8 +93,7 @@ const Employees = () => {
   const closedDialog = () => {
     setIsOpened(false);
   };
-
-  const updateUserDetails = async () => {
+    const updateUserDetails = async () => {
     const updatedEmployeeIndex = EmployeeList.findIndex(employee => employee.id === updateUser.id);
 
     try {
@@ -129,10 +131,16 @@ const Employees = () => {
   };
 
   const handleAddEmployee = async (e) => {
+
     e.preventDefault();
+<<<<<<< Updated upstream
     const response = await axios.post("https://localhost:6260/empsignup", employeefrom);
+=======
+    console.log("employee from data", employeefrom);
+    const response = await axios.post("https://localhost:7189/empsignup", employeefrom);
+>>>>>>> Stashed changes
     dispatch(Employeesdata([...EmployeeList, response?.data]));
-    console.log("response data", response);
+
   };
 
   const handleEmployeeChange = (event) => {
@@ -144,7 +152,6 @@ const Employees = () => {
     } else if (selectedValue === "My Employee") {
       handleMyEmployee(LoginData.id);
     }
-
   };
   const handlechatbot = () => {
     setchaticon(!chaticon);
@@ -153,6 +160,7 @@ const Employees = () => {
     SetProfile(false);
     dispatch(Employeesdata(employeedata));
   };
+
   const [isProfile, SetProfile] = useState(false);
   const handleEmployeeProfile = () => {
     SetProfile(true);
@@ -168,34 +176,45 @@ const Employees = () => {
     setSearchInput(event.target.value);
   }
 
-const filteredRequests =searchinput ? EmployeeList.filter((row)=>{
-        const searchvalue=searchinput.toLocaleLowerCase();
-        return Object.values(row).some((value)=>
-        value && value.toString().toLowerCase().includes(searchvalue)
-        );
-}):EmployeeList;
+  const filteredRequests = searchinput ? EmployeeList.filter((row) => {
+    const searchvalue = searchinput.toLocaleLowerCase();
+    return Object.values(row).some((value) =>
+      value && value.toString().toLowerCase().includes(searchvalue)
+    );
+  }) : EmployeeList;
 
- const employeeMap = EmployeeList.reduce((map, employee) => {
+  const employeeMap = EmployeeList.reduce((map, employee) => {
     map[employee.id] = employee;
     return map;
   }, {});
 
-
- const combinedData = employprofile.map((profile) => {
+  const combinedData = employprofile.map((profile) => {
     const employeeData = employeeMap[profile.emplid];
     return {
       ...profile, ...employeeData
-
     };
   });
-
+  const emojipng = {
+    image: [like, heart, laughing, angry]
+  }
+  const updateCombineData = combinedData.map((object) => ({
+    ...object,
+    emoji: emojipng
+  }))
+  console.log("updatedCombineData", updateCombineData);
   const [chat, setChat] = useState({
     message: ""
   })
+
   const connectionRef = useRef(null);
   useEffect(() => {
+<<<<<<< Updated upstream
  connectionRef.current = new HubConnectionBuilder()
       .withUrl("https://localhost:6260/notificationHub", {
+=======
+    connectionRef.current = new HubConnectionBuilder()
+      .withUrl("https://localhost:7189/notificationHub", {
+>>>>>>> Stashed changes
 
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets
@@ -212,8 +231,6 @@ const filteredRequests =searchinput ? EmployeeList.filter((row)=>{
 
       dispatch(setConnectionId(userid));
     })
-
-
     connectionRef.current.on("ReceiveBotMessage", (response) => {
       const msg = {
         data: response,
@@ -222,7 +239,7 @@ const filteredRequests =searchinput ? EmployeeList.filter((row)=>{
       }
       dispatch(setNotification(msg));
     });
-  }, [])
+  })
   const sendmsgs = useSelector((state) => {
     return state.leave.SendBotMsgs;
   })
@@ -243,6 +260,7 @@ const filteredRequests =searchinput ? EmployeeList.filter((row)=>{
     setChat("");
 
   }
+
   console.log("combine data", combinedData);
   const handlecancel = () => {
     setchaticon(!chaticon);
@@ -252,57 +270,61 @@ const filteredRequests =searchinput ? EmployeeList.filter((row)=>{
   const sortedMessage = () => {
     return [...msgs].sort((a, b) => new Date(a.currentTime) - new Date(b.currentTime));
   }
+
   const sortdata = sortedMessage();
 
-const functions = [x => x + 1, x => x * x, x => 2 * x];
-  console.log(functions.forEach((data)=>{
-    console.log(data);
-  }))
-  const CountryList = [
-    {
-      id: 1, country: "India", capital: "Delhi"
-    },
-    {
-      id: 2, country: "Pakistan", capital: "Islamabad"
-    },
-    {
-      id: 3, country: "China", capital: "Beijing"
+  const [isLikeEnable, setLikeEnable] = useState();
+  const handleLikeButton = (id) => {
+    const employee = combinedData.find((data) => data.emplid === id);
+    if (employee) {
+      setLikeEnable(id);
     }
-  ];
-const [countryId,setcountryId]=useState();
-const handleSelectedCountry =(event)=>{
-  const contId=parseInt(event.target.value);
-  const capitalcountry=CountryList.filter((item)=>{
-   return item.id===contId;
-  })
-  setcountryId(capitalcountry);
-}
-return (
-    <>
-         <div className="container-fluid position-absolute">
-         <div className="d-flex justify-content-center">
-          <h4 className="text-center mt-2">Employees Profile
-           <select  onChange={handleSelectedCountry}>
-           <option value="">Select a country</option>
-           {CountryList.map((item, index) => (
-            <option key={index} value={item.id}>
-            {item.country}
-            </option>
-             ))}
 
-            </select>
-            { countryId!=null && 
-             <span>   { countryId[0].capital}</span>}</h4>
-         </div>
-          <div className="d-flex justify-content-between">
+  }
+  
+
+ 
+
+ const [skills, setSkills] = useState([100]);
+ const handleAddonSkills = () => {
+    setShowSkills(true);
+    setSkills(skills + 1);
+    setEmployeeform({
+      ...employeefrom,
+      skills: [...employeefrom.skills, skills]
+    })
+  }
+  const handleRemoveSkills = (data) => {
+    const updatedskills = skills.filter((item, index) => {
+      return index !== data;
+    })
+    setSkills(updatedskills);
+
+  }
+  const handleAddSkills = (index, value) => {
+    const updatedSkills = [...employeefrom.skills];
+    updatedSkills[index] = value;
+    setEmployeeform({
+      ...employeefrom,
+      skills: updatedSkills
+    })
+    console.log("data working", updatedSkills);
+  }
+  const [showSkills, setShowSkills] = useState(false);
+  return (
+    <>
+      <div className="container-fluid position-absolute">
+        <div className="d-flex justify-content-center">
+
+        </div>
+        <div className="d-flex justify-content-between">
           <div className="d-flex justify-content-end mt-2">
             <Button className="text-center  text-white border border-1 border-primary text-primary" onClick={openedDialog}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
           </div>
           <div className="d-flex justify-content-end mt-2">
             <input placeholder="Search" value={searchinput} onChange={handleSearch} className="mt-2 border border-4 border-primary rounded mr-3" />
           </div>
-          
-           <FormControl fullWidth className="w-25">
+            <FormControl fullWidth className="w-25">
             <InputLabel id='demo-simple-select-label'>Select</InputLabel>
             <Select
               labelId='demo-simple-select-label'
@@ -314,17 +336,17 @@ return (
               <hr />
               <MenuItem value="My Employee" className="ml-5">My Employee</MenuItem> <hr></hr>
               <div className="d-flex justify-content-end mt-2">
-                <Button className="text-center  text-white border border-1 border-primary text-primary" onClick={handleEmployeeProfile}> <i class="fa-sharp fa-solid fa-plus"></i>&nbsp; Add Employees</Button>
+                <MenuItem value="My Employee" className="ml-5" onClick={handleEmployeeProfile}>Employees Profile</MenuItem> <hr></hr>
               </div>
             </Select>
-          </FormControl> 
+          </FormControl>
         </div>
         {isProfile ? (
           <div className="row">
             {employprofile && employprofile.length > 0 ? (
-              combinedData.map((data) => (
-                <div className="col-lg-4 col-md-4 col-sm-6 mt-5">
-                  <Card sx={{ maxWidth: 345 }} key={data.id} className=" border border-5 border-primary ml-3" style={{ borderRadius: "15px" }}>
+              updateCombineData.map((data) => (
+                <div className="col-lg-4 col-md-4 col-sm-6 mt-5" key={data.id}>
+                  <Card sx={{ maxWidth: 345 }} className=" border border-5 border-primary ml-3" style={{ borderRadius: "15px" }}>
                     <img src={`data:image/png;base64,${data.img}`} alt="Employee Profile" className="card-img-top" style={{ objectFit: "cover", height: "200px", borderRadius: "15px 15px 0 0" }} />
                     <CardContent>
                       <Typography variant="h5" component="div">
@@ -337,8 +359,9 @@ return (
                         Department: {data.department}
                       </Typography>
                     </CardContent>
-                    <CardActions className="d-flex justify-content-center">
-                      <Button size="small" variant="contained" className="btn btn-primary  bg-primary text-white" style={{ borderRadius: "5px", }}>
+                    <CardActions className="d-flex justify-content-between">
+                      <Button size="small" variant="contained" className="btn btn-primary 
+                    bg-primary text-white" style={{ borderRadius: "5px", }}>
                         View Profile
                       </Button>
                     </CardActions>
@@ -349,7 +372,7 @@ return (
             )}
           </div>
         ) : (
-           <div className="row mt-3">
+          <div className="row mt-3">
             <TableContainer >
               <Table>
                 <TableHead>
@@ -392,42 +415,43 @@ return (
         )
         }
       </div>
-    <div className={` ${chaticon ? 'position-relative  chatfix' : 'position-relative chatbot'
+      <div className={` ${chaticon ? 'position-relative  chatfix' : 'position-relative chatbot'
         }`}>
         {
           chaticon && <div className=" d-flex justify-content-end ">
             <div className="chatdiv ">
               <div className="d-flex justify-content-end"> <i class="fa-regular fa-circle-xmark" onClick={handlecancel}></i></div>
               <h5 className="text-center">Chat Bot</h5>
-               {sortdata && sortdata.map((item, index) => {
-                return (<div key={index} className="m-2">
-                  {
-                    item.type === "send" && <div className=""><span className="bg-primary border p-1 rounded text-white">{item.data}</span>   </div>
-                  }
-                  {
-                    item.type === "receive" && (
-                      <div className="d-flex justify-content-end">
-                        <span className="p-1 bg-secondary text-white border rounded ">
-                          {item.data === "employee" ? (
-                            EmployeeList.map((item, index) => (
-                              <div key={index} >
-                               <span > {item.firstname}</span>
-                              </div>
-                            ))
-                          ) : (
-                            item.data === "details" ? ( LoginData.email):(
-                              item.data
-                            )
-                          )}
+              {
+                sortdata && sortdata.map((item, index) => {
+                  return (<div key={index} className="m-2">
+                    {
+                      item.type === "send" && <div className=""><span className="bg-primary border p-1 rounded text-white">{item.data}</span>   </div>
+                    }
+                    {
+                      item.type === "receive" && (
+                        <div className="d-flex justify-content-end">
+                          <span className="p-1 bg-secondary text-white border rounded ">
+                            {item.data === "employee" ? (
+                              EmployeeList.map((item, index) => (
+                                <div key={index} >
+                                  <span > {item.firstname}</span>
+                                </div>
+                              ))
+                            ) : (
+                              item.data === "details" ? (LoginData.email) : (
+                                item.data
+                              )
+                            )}
 
-                        </span>
-                      </div>
-                    )
-                  }
-                </div>);
-              })
+                          </span>
+                        </div>
+                      )
+                    }
+                  </div>);
+                })
               }
-             <div className="d-flex justify-content-center shadow-lg p-1 ">
+              <div className="d-flex justify-content-center shadow-lg p-1 ">
                 <input type="text" value={chat.message} className="border rounded border-5 border-primary " onChange={handlechat} placeholder="Ask to Bot"></input>
                 <button onClick={sendmsgtochatbot} className="border rounded border-5 border-primary">send</button></div>
             </div>
@@ -438,7 +462,7 @@ return (
             <img src={robot} className="bot" alt="" />
           </span>
         </div>
-        }      </div>
+        }</div>
       <Dialog open={isOpened} onClose={closedDialog}>
         <DialogTitle>Add Employee</DialogTitle>
         <DialogContent>
@@ -458,6 +482,10 @@ return (
                     <label htmlFor="email">Email</label>
                     <input type="email" className="form-control" id="email" name="email" value={employeefrom.email} onChange={handleAddEmp} placeholder="Enter email" required />
                   </div>
+                  <div className="form-group ">
+                    <label htmlFor="email">Manager</label>
+                    <input type="text" className="form-control" id="manager" name="manager" value={employeefrom.manager} onChange={handleAddEmp} placeholder="Enter department" required />
+                  </div>
                 </div>
                 <div className="ml-3">
                   <div className="form-group">
@@ -472,14 +500,29 @@ return (
                     <label htmlFor="email">Status</label>
                     <input type="text" className="form-control" id="status" name="status" value={employeefrom.status} onChange={handleAddEmp} placeholder="Enter status" required />
                   </div>
+                  <div className="form-group ">
+                    {showSkills && <label htmlFor="email">Skills</label>}
+                    {employeefrom.skills.map((data, index) => {
+
+                      return (
+                        <div className="d-flex" key={index} >
+                          <input type="text" className="form-control" id="=skills" name="skills" value={data} onChange={(e) => handleAddSkills(index, e.target.value)} placeholder="Enter Skill" required />
+                          {
+                            index > 0 && <i class="fa-solid fa-minus m-2" onClick={() => { handleRemoveSkills(index) }}></i>
+                          }
+                        </div>
+
+                      )
+                    })
+
+                    }
+                    Add Skills  <i class="fa-solid fa-plus m-2" onClick={handleAddonSkills}></i>
+                  </div>
                 </div>
               </div>
-              <div className="form-group w-50">
-                <label htmlFor="email">Manager</label>
-                <input type="text" className="form-control" id="manager" name="manager" value={employeefrom.manager} onChange={handleAddEmp} placeholder="Enter department" required />
-              </div>
+
             </div>
-            <button type="submit" className="btn btn-primary" onClick={closedDialog}>Save</button>
+            <button type="submit" className="btn btn-primary">Save</button>
             <Button variant="contained" color="secondary" className="ml-2" onClick={closedDialog}>
               Close
             </Button>

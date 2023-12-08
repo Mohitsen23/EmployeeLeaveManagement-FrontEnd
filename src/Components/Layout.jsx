@@ -5,26 +5,24 @@ import Sidebar from './Sidebar';
 import ApplyLeave from './ApplyLeave';
 import Profile from './Profile';
 import LeaveRequest from './LeaveRequest';
-import Employees from './Employees';
+
 import { useDispatch, useSelector } from 'react-redux';
-import ManagerProfile from './ManagerProfile';
+
 import Login from './Login';
-
+import "../Styles/Loading.css";
 import Chat from './Chat';
+import { Suspense } from 'react';
 
 
+const Employees=React.lazy(()=>import('./Employees'))
 
 function Layout() {
   const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state) => state.leave.Sidebar);
 
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-const isAuthenticated=useSelector((state)=>{
-  return state.leave.isAuthenticated;
-})
 
-
-  const handleToggleSidebar = () => {
+ const handleToggleSidebar = () => {
     if (window.innerWidth <= 768) {
       setMobileSidebarOpen(!isMobileSidebarOpen);
     } else {
@@ -63,8 +61,8 @@ const isAuthenticated=useSelector((state)=>{
               <Route path="/profile" element={<Profile />} />
               <Route path="/apply" element={<ApplyLeave />} />
               <Route path="/leaveRequest" element={<LeaveRequest />} />
-              <Route path="/employees" element={<Employees />} />
-              <Route path="/managerProfile" element={<ManagerProfile />} />
+              <Route path="/employees" element={<Suspense fallback={  <div class="loading-circle"></div>}><Employees/> </Suspense>} />
+              
              
               </Routes>
          </div>

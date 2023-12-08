@@ -19,13 +19,14 @@ const initialState = {
   SentMessage:[],
   SignalRConnection:[],
   SendBotMsgs:[],
+  managerProfilepic:[]
  
 };
 
 const LeaveSlice = createSlice({
-  name: "Leave",
-  initialState,
-  reducers: {
+    name: "Leave",
+    initialState,
+    reducers: {
     addLeaves: (state, { payload }) => {
       state.Leave = payload;
     },
@@ -56,7 +57,6 @@ const LeaveSlice = createSlice({
     setMessageData: (state, { payload }) => {
       state.MessageData = payload; 
     },
- 
     setConnectionId:(state,{payload})=>{
       state.ConnectionId.push(payload);
     },
@@ -80,9 +80,12 @@ const LeaveSlice = createSlice({
     },
     setBotMsgs:(state,{payload})=>{
       state.SendBotMsgs.push(payload);
+    },
+    setManagerProfilepicData:(state,{payload})=>{
+      state.managerProfilepic.push(payload);
     }
   }
 });
 
-export const { addLeaves,setBotMsgs,setSentMessages,setRecentMessage,setSending,setReceiving, setManagers,userDetails,LoginUser,Employeesdata,setConnectionId ,Sidebar,TokenData,SetAuthenticated,SetEmployeesProfile,setNotification,setMessageData,setSignalRConnection} = LeaveSlice.actions;
+export const { addLeaves,setBotMsgs,setManagerProfilepicData,setSentMessages,setRecentMessage,setSending,setReceiving, setManagers,userDetails,LoginUser,Employeesdata,setConnectionId ,Sidebar,TokenData,SetAuthenticated,SetEmployeesProfile,setNotification,setMessageData,setSignalRConnection} = LeaveSlice.actions;
 export default LeaveSlice.reducer;

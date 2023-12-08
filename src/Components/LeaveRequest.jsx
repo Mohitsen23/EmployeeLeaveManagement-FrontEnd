@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,  } from '@material-ui/core';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, } from '@material-ui/core';
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addLeaves } from "./LeaveSlice";
@@ -8,12 +8,13 @@ import Cookies from "js-cookie";
 const LeaveRequest = () => {
 
 
-  const LoginData=useSelector(state=>{
+  const LoginData = useSelector(state => {
     return state.leave.LoginUser;
   })
-  
-const tokendata=useSelector((state)=>{
+
+  const tokendata = useSelector((state) => {
     return state.leave.Token;
+<<<<<<< Updated upstream
 })
 const config = {
   headers: {
@@ -28,26 +29,39 @@ const config = {
     .catch((error) => {
       console.error(error);
     });
+=======
+  })
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${tokendata}`
+    }
+  };
+>>>>>>> Stashed changes
   const [searchInput, setSearchInput] = useState('');
   const leaveRequest = useSelector(state => state.leave.Leave);
 
   const getStatusColor = (status) => {
     if (status === 'pending                                           ' || status === 'pending') {
       return 'bg-warning';
-    } else if (status ==="Rejected                                          " || status === 'Rejected') {
+    } else if (status === "Rejected                                          " || status === 'Rejected') {
       return 'bg-danger';
     } else {
       return 'bg-success';
     }
   };
-  
+
 
   const dispatch = useDispatch();
-  
+
   const handleRejected = (id) => {
     const updatedRequest = leaveRequest.map((data) => {
+<<<<<<< Updated upstream
       if (data.leaveid == id) {
         axios.get(`https://localhost:6260/RejectLeaveRequest/${data.leaveid}`,config);
+=======
+      if (data.leaveid === id) {
+        axios.get(`https://localhost:7189/RejectLeaveRequest/${data.leaveid}`, config);
+>>>>>>> Stashed changes
         return { ...data, status: 'Rejected' };
       }
       return data;
@@ -58,7 +72,11 @@ const config = {
   const handleAcceptRequest = (id) => {
     const updatedRequest = leaveRequest.map((data) => {
       if (data.leaveid === id) {
+<<<<<<< Updated upstream
         axios.get(`https://localhost:6260/ChangeLeaveStatus/${data.leaveid}`,config);
+=======
+        axios.get(`https://localhost:7189/ChangeLeaveStatus/${data.leaveid}`, config);
+>>>>>>> Stashed changes
         return { ...data, status: 'Approved' };
       }
       return data;
@@ -70,35 +88,35 @@ const config = {
     setSearchInput(event.target.value);
   };
 
-const filteredRequests = searchInput
-  ? leaveRequest.filter((row) => {
+  const filteredRequests = searchInput
+    ? leaveRequest.filter((row) => {
       const searchValue = searchInput.toLowerCase();
       return Object.values(row).some((value) =>
 
         value && value.toString().toLowerCase().includes(searchValue)
       );
     })
-  : leaveRequest;
+    : leaveRequest;
 
 
-const itemsperpage=20;
+  const itemsperpage = 20;
 
-const [currentPage,setCurrentPage]=useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
-const totalPages=Math.ceil(filteredRequests.length / itemsperpage);
-const startingIndex=(currentPage-1) * itemsperpage;
-const endIndex = startingIndex + itemsperpage;
+  const totalPages = Math.ceil(filteredRequests.length / itemsperpage);
+  const startingIndex = (currentPage - 1) * itemsperpage;
+  const endIndex = startingIndex + itemsperpage;
   const currentData = filteredRequests.slice(startingIndex, endIndex);
-console.log("currentData",currentData);
-const handlePrevious=()=>{
-  setCurrentPage(currentPage-1);
-}
-const handleNextPage=()=>{
-  setCurrentPage(currentPage+1);
-}
-const handleClickOnPages=(data)=>{
-  setCurrentPage(data);
-}
+  console.log("currentData", currentData);
+  const handlePrevious = () => {
+    setCurrentPage(currentPage - 1);
+  }
+  const handleNextPage = () => {
+    setCurrentPage(currentPage + 1);
+  }
+  const handleClickOnPages = (data) => {
+    setCurrentPage(data);
+  }
   return (
     <>
       <div className="container">
@@ -120,46 +138,46 @@ const handleClickOnPages=(data)=>{
                   <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
-             <TableBody>
-                
-             
-  {currentData.map((row,index) => (
-    row.manager === LoginData.id ? (
-      <TableRow key={row.id}>
-       
-        <TableCell>{row.id}</TableCell>
-        <TableCell>{row.emplid}</TableCell>
-        <TableCell>{row.leavetype}</TableCell>
-        <TableCell>{row.fromDate}</TableCell>
-        <TableCell>{row.toDate}</TableCell>
-        <TableCell>{row.reason}</TableCell>
-        <TableCell className={getStatusColor(row.status)}>{row.status}</TableCell>
-        {row.status === "pending                                           " && (
-          <>
-            <TableCell onClick={() => { handleRejected(row.leaveid) }}><Button className="bg-danger text-white">Reject</Button></TableCell>
-            <TableCell onClick={() => { handleAcceptRequest(row.leaveid) }}><Button className="bg-success text-white">Accept</Button></TableCell>
-          </>
-        )}
-      </TableRow>
-    ) : null
-  ))}
- 
-</TableBody>
+              <TableBody>
 
-  </Table>
-  <Table className="mt-4">
-  <TableRow className="d-flex" > 
-    <Button onClick={handlePrevious} disabled={currentPage===1}>  Previous</Button>
-    {
-      Array.from({length:totalPages}).map((data,index)=>{
-        return(
-        <Button onClick={()=>{handleClickOnPages(index+1)}} key={index}>{index+1}</Button>
-        )
-      })
-    }
-    <Button onClick={handleNextPage} disabled={currentPage===totalPages}>Next</Button>
-        </TableRow>
-  </Table>
+
+                {currentData.map((row, index) => (
+                  row.manager === LoginData.id ? (
+                    <TableRow key={row.id}>
+
+                      <TableCell>{row.id}</TableCell>
+                      <TableCell>{row.emplid}</TableCell>
+                      <TableCell>{row.leavetype}</TableCell>
+                      <TableCell>{row.fromDate}</TableCell>
+                      <TableCell>{row.toDate}</TableCell>
+                      <TableCell>{row.reason}</TableCell>
+                      <TableCell className={getStatusColor(row.status)}>{row.status}</TableCell>
+                      {row.status === "pending                                           " && (
+                        <>
+                          <TableCell onClick={() => { handleRejected(row.leaveid) }}><Button className="bg-danger text-white">Reject</Button></TableCell>
+                          <TableCell onClick={() => { handleAcceptRequest(row.leaveid) }}><Button className="bg-success text-white">Accept</Button></TableCell>
+                        </>
+                      )}
+                    </TableRow>
+                  ) : null
+                ))}
+
+              </TableBody>
+
+            </Table>
+            <Table className="mt-4">
+              <TableRow className="d-flex" >
+                <Button onClick={handlePrevious} disabled={currentPage === 1}>  Previous</Button>
+                {
+                  Array.from({ length: totalPages }).map((data, index) => {
+                    return (
+                      <Button onClick={() => { handleClickOnPages(index + 1) }} key={index}>{index + 1}</Button>
+                    )
+                  })
+                }
+                <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
+              </TableRow>
+            </Table>
           </TableContainer>
         </div>
       </div>

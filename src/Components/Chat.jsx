@@ -9,6 +9,7 @@ import logo from '../Assets/men.jpg';
 
 import online from '../Assets/checked.png'
 import send from '../Assets/send.png'
+import { Button } from "bootstrap";
 
 const Chat = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,9 @@ const Chat = () => {
   const [receiverid, setReceiverId] = useState(null);
   const connectionRef = useRef(null);
   const fileInputRef = useRef(null);
+    const [callerId, setCallerId] = useState(null);
+  const [calleeId, setCalleeId] = useState(null);
+  const [roomId, setRoomId] = useState(null);
   const managers = useSelector((state) => {
     return state.leave.Managers;
   })
@@ -51,6 +55,7 @@ const Chat = () => {
   const recentsort = () => {
     return [...recentdata].sort((a, b) => new Date(a.currentTime) - new Date(b.currentTime));
   };
+
   const onlineuser = useSelector((state) => {
     return state.leave.ConnectionId;
   })
@@ -60,67 +65,98 @@ const Chat = () => {
   useEffect(() => {
     axios.get("https://localhost:6260/getManagers")
       .then((res) => {
+        console.log("managers data",res.data);
         dispatch(setManagers(res.data));
       })
       .catch((error) => {
 
       })
-    // connectionRef.current = new HubConnectionBuilder()
-    //   .withUrl("https://localhost:6260/notificationHub", {
-    //     accessTokenFactory: () => token,
-    //     skipNegotiation: true,
-    //     transport: HttpTransportType.WebSockets
-    //   })
-    //   .configureLogging(LogLevel.Trace)
-    //   .withAutomaticReconnect()
-    //   .build();
-    // dispatch(setSignalRConnection(connectionRef));
-    // connectionRef.current
-    //   .start()
-    //   .then(() => console.log("SignalR Connected"))
-    //   .catch((err) => console.log("SignalR Connection Error: ", err));
-    // connectionRef.current.on("Connected", (connectionid, userid) => {
+    connectionRef.current = new HubConnectionBuilder()
+      .withUrl("https://localhost:6260/notificationHub", {
+        accessTokenFactory: () => token,
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets
+      })
+      .configureLogging(LogLevel.Trace)
+      .withAutomaticReconnect()
+      .build();
+    dispatch(setSignalRConnection(connectionRef));
+    connectionRef.current
+      .start()
+      .then(() => console.log("SignalR Connected"))
+      .catch((err) => console.log("SignalR Connection Error: ", err));
+    connectionRef.current.on("Connected", (connectionid, userid) => {
 
-    //   dispatch(setConnectionId(userid));
-    // })
-    // connectionRef.current.on("ReceiveImages", (senderid, receiverid, image) => {
-    //   const messagedata = {
-    //     receiverid: receiverid,
-    //     senderid: senderid,
-    //     type: "base64",
-    //     message: image,
-    //     currentTime: new Date().toString(),
+      dispatch(setConnectionId(userid));
+    })
 
-    //   }
-    //   dispatch(setRecentMessage(messagedata));
-    // })
+    connectionRef.current.on("IncomingVideoCall", (senderUserId, senderConnectionId) => {
+     console.log("senderUserId, senderConnectionId",senderUserId, senderConnectionId);
+    })
 
-    // connectionRef.current.on("ReceiveMessage", (senderId, receiverid, message) => {
+    connectionRef.current.on("VideoCallAccepted", (recipientUserId, recipientConnectionId) => {
 
-    //   const messagedata = {
-    //     receiverid: receiverid,
-    //     senderid: senderId,
-    //     message: message,
-    //     currentTime: new Date().toString(),
-    //   }
-    //   dispatch(setRecentMessage(messagedata));
+      console.log("recipientConnectionId",recipientConnectionId,recipientUserId);
+    })
 
-    // })
 
-  //   connectionRef.current.on("messageReceived", (notification) => {
-  //     dispatch(setNotification(notification));
-  //   });
-  //   return () => {
-  //     connectionRef.current.stop();
-  //   };
+    connectionRef.current.on("ReceiveImages", (senderid, receiverid, image) => {
+      const messagedata = {
+        receiverid: receiverid,
+        senderid: senderid,
+        type: "base64",
+        message: image,
+        currentTime: new Date().toString(),
+
+      }
+      dispatch(setRecentMessage(messagedata));
+    })
+
+
+   
+
+    connectionRef.current.on("ReceiveMessage", (senderId, receiverid, message) => {
+
+      const messagedata = {
+        receiverid: receiverid,
+        senderid: senderId,
+        message: message,
+        currentTime: new Date().toString(),
+      }
+      dispatch(setRecentMessage(messagedata));
+
+    })
+
+    connectionRef.current.on("messageReceived", (notification) => {
+      dispatch(setNotification(notification));
+    });
+    return () => {
+      connectionRef.current.stop();
+    };
    }, []);
+
+/* // video call
+   const startCall = async () => {
+    try {
+      connectionRef.current.invoke("StartVideoCall",  receiverid).catch((error) => console.error(error));
+
+    } catch (error) {
+      console.error("Error starting call:", error);
+    }
+  };
+  
+
+  const answerCall = () => {
+    connectionRef.current.invoke("AcceptVideoCall",login.id);
+  };
+*/
 
   const handleChange = (e) => {
     setMessageInput(e.target.value);
   };
-
+ 
   const handleimageClick = () => {
-    // fileInputRef.current.click();
+    fileInputRef.current.click();
 
     setimg(true);
   }
@@ -130,29 +166,39 @@ const Chat = () => {
   }
   const [value, setValue] = useState(false);
   const SendMessage = () => {
+    console.log("this method is calling");
     setValue(true);
- const data = {
-      type: 'text',
-      senderid: login.id,
-      receiverid: receiverid,
-      Message: messageInput,
-      readornot: 1
-    }
+  
+    const data =  JSON.stringify({
+      "id": 0,
+      "senderid": login.id,
+      "receiverid": receiverid,
+      "message": messageInput,
+      "readorNot": "1",
+      "timestamp": new Date()
+    });
+  
     const msg = {
       senderid: login.id,
       receiverid: receiverid,
       Message: messageInput,
       type: "text",
       currentTime: new Date().toString(),
-    }
+    };
+
+    connectionRef.current.invoke("SendMessage", login.id, receiverid, msg.Message).catch((error) => console.error(error));
+  
     dispatch(setSentMessages(msg));
-    axios.post("https://localhost:6260/SendMessage", data)
+    axios.post("https://localhost:7189/SendMessage", data)
       .then((res) => {
+        console.log(res, "result");
       })
       .catch((error) => {
-      })
+        console.error("Error sending message:", error);
+      });
+  
     setMessageInput("");
-  };
+  };  
   const messagearray = [...senddbsdata, ...receivedbData];
   const sortedMessage = () => {
     return [...messagearray].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
@@ -192,9 +238,8 @@ const Chat = () => {
       <div className="row mt-2 ">
         <div className="col-3 head-1">
           <h4 className="text-center mt-3">Chat </h4>
-
-        
         </div>
+        
         <div className="col-9 border border-4 head-2 d-flex justify-content-between">
           <div className="userprofile d-flex ">
             <div><img src={logo} className="userimg" alt="" /></div>
@@ -214,12 +259,14 @@ const Chat = () => {
       </div>
       <div className="row">
         <div className="col-3 side">
+       
+
           {managers?.map((item, index) => (
 
             <div key={index} className=" " onClick={() => { handleclick(item.id) }}>
               {item.id !== login.id ? (
                 <div className="d-flex justify-content-around User">
-                  <span>  <img src={logo} className="img" alt="" />{onlineuser.map((status) => (
+                  <span> {onlineuser.map((status) => (
                     status == item.id && <img src={online} alt="" className="onlinestatus" />
                   ))} </span>
                   <div className="name">{item.firstname} {item.lastname}</div>
@@ -229,6 +276,9 @@ const Chat = () => {
         {receiverid ? (
           <div className="col-9 main d-flex align-items-end">
             <div className="messagediv w-100 ">
+
+
+           
               <div> {
                 sortmessage.map((item, index) => {
                   return (<div className="" key={index}>
@@ -306,4 +356,5 @@ const Chat = () => {
 
 
 export default Chat;
+
 

@@ -7,14 +7,13 @@ import { useEffect } from "react";
 import { addLeaves } from "./LeaveSlice";
 import axios from "axios";
 
-const LeaveType = [
+   const LeaveType = [
   "Annual Leave/Vacation Leave",
   "Sick Leave",
   "Personal Leave",
-]
-const ApplyLeave = () => {
+   ]
+  const ApplyLeave = () => {
   const [selectedOption, setSelectedOption] = useState('Apply Leave');
-
   const dispatch = useDispatch();
   const [leaveQuota, setLeaveQuota] = useState({})
   const [document, setDocumentData] = useState([]);
@@ -29,16 +28,14 @@ const ApplyLeave = () => {
         console.error(error);
       }
     };
-
-
-
-
     fetchLeaveQuota();
-
-
     console.log("leave quota data ", leaveQuota);
+<<<<<<< Updated upstream
 
     axios.get("https://localhost:6260/download/Document")
+=======
+    axios.get("https://localhost:7189/download/Document")
+>>>>>>> Stashed changes
       .then((res) => {
         setDocumentData(res.data);
         console.log("response data", document);
@@ -50,8 +47,13 @@ const ApplyLeave = () => {
 
   console.log("leangth of leaveQuota", leaveQuota);
   const handleDelete = (id) => {
+<<<<<<< Updated upstream
     const updatedLeaves = LeaveStatus.filter(data => data.id !== id);
     const response = axios.delete(`https://localhost:6260/deleteLeave/${id}`)
+=======
+  const updatedLeaves = LeaveStatus.filter(data => data.id !== id);
+  const response = axios.delete(`https://localhost:7189/deleteLeave/${id}`)
+>>>>>>> Stashed changes
     dispatch(addLeaves(updatedLeaves));
 
   }
@@ -65,8 +67,7 @@ const ApplyLeave = () => {
     }
   };
   const LeaveStatus = useSelector(state => {
-
-    return state.leave.Leave;
+      return state.leave.Leave;
   });
   const LoginData = useSelector(state => {
     return state.leave.LoginUser;
@@ -102,7 +103,6 @@ const ApplyLeave = () => {
     setFormData({ ...formData, leaveReason: event.target.value });
   };
 
-
   const outputObject = {
     leavetype: "string",
     emplid: 0,
@@ -113,18 +113,16 @@ const ApplyLeave = () => {
     manager: 0,
     leave: {
       id: 0,
-
       employeeid: 0,
     },
   };
 
 
-  const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => {
     event.preventDefault();
     outputObject.leavetype = formData.leavetype;
     outputObject.reason = formData.leaveReason;
     outputObject.fromDate = formData.fromDate;
-
     outputObject.toDate = formData.toDate;
     outputObject.emplid = LoginData.id;
     outputObject.status = "pending";
@@ -133,18 +131,13 @@ const ApplyLeave = () => {
     outputObject.leave.employeeid = LoginData.id;
     const response = await axios.post("https://localhost:6260/applyleave", outputObject,);
     dispatch(addLeaves([...LeaveStatus, response.data]));
-
-  };
-
-
-
+    };
   const [selectedFile, setSelectedFile] = useState(null);
-
   const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+  setSelectedFile(event.target.files[0]);
   };
 
-  const handleFormSubmit = (event) => {
+    const handleFormSubmit = (event) => {
     event.preventDefault();
 
     const formData = new FormData();
@@ -157,30 +150,21 @@ const ApplyLeave = () => {
         console.log("error", error);
       })
 
-  };
+   };
 
-
- 
-  const handleinputChange = (event) => {
+    const handleinputChange = (event) => {
     const searchValue = event.target.value;
     setInputValue(searchValue);
-  }
-  useEffect(() => {
-    const filteredData = LeaveStatus.filter(data =>
-      Object.values(data).some(value => {
-        if (value !== null && typeof value !== 'undefined') {
-          return value.toString().toLowerCase().includes(inputValue.toLowerCase());
-        }
-        return false;
-      })
-    );
+   }
 
-  
-  }, [inputValue, LeaveStatus]);
+
   const [isOpen, setDialog] = useState(false);
   const closeDialog = () => {
     setDialog(false);
   }
+  const a =[1,2,3];
+  a[10]=100;
+  console.log("length of a is "+a.length);
   const handletoggle = () => {
     setDialog(true);
   }
@@ -188,7 +172,7 @@ const ApplyLeave = () => {
     <>
       <div className="container">
         <div className="row d-flex justify-content-end">
-        
+
           <FormControl >
 
             <Select

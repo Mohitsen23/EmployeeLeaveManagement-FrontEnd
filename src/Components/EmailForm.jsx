@@ -7,9 +7,8 @@ const EmailForm = () => {
   const [body, setBody] = useState('');
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const emailData = {
+      e.preventDefault();
+      const emailData = {
       recipientEmail: recipientEmail,
       subject: subject,
       body:body ,
