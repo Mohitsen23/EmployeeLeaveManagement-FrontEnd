@@ -133,12 +133,12 @@ const openDialog = (id) => {
   const handleAddEmployee = async (e) => {
 
     e.preventDefault();
-<<<<<<< Updated upstream
+
     const response = await axios.post("https://localhost:6260/empsignup", employeefrom);
-=======
+
     console.log("employee from data", employeefrom);
-    const response = await axios.post("https://localhost:7189/empsignup", employeefrom);
->>>>>>> Stashed changes
+
+
     dispatch(Employeesdata([...EmployeeList, response?.data]));
 
   };
@@ -208,15 +208,11 @@ const openDialog = (id) => {
 
   const connectionRef = useRef(null);
   useEffect(() => {
-<<<<<<< Updated upstream
+
  connectionRef.current = new HubConnectionBuilder()
       .withUrl("https://localhost:6260/notificationHub", {
-=======
-    connectionRef.current = new HubConnectionBuilder()
-      .withUrl("https://localhost:7189/notificationHub", {
->>>>>>> Stashed changes
 
-        skipNegotiation: true,
+ skipNegotiation: true,
         transport: HttpTransportType.WebSockets
       })
       .configureLogging(LogLevel.Trace)

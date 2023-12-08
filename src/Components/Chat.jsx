@@ -189,7 +189,7 @@ const Chat = () => {
     connectionRef.current.invoke("SendMessage", login.id, receiverid, msg.Message).catch((error) => console.error(error));
   
     dispatch(setSentMessages(msg));
-    axios.post("https://localhost:7189/SendMessage", data)
+    axios.post("https://localhost:6260/SendMessage", data)
       .then((res) => {
         console.log(res, "result");
       })

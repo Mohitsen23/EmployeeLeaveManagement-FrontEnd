@@ -19,7 +19,7 @@ const Header = ({ responseData }, { handleToggleSidebar }) => {
   // useEffect(()=>{
 
   //  const connection = new HubConnectionBuilder()
-  //   .withUrl("https://localhost:7189/notificationHub",{
+  //   .withUrl("https://localhost:6260/notificationHub",{
   //     skipNegotiation: true,
   //     transport: HttpTransportType.WebSockets
   //   })

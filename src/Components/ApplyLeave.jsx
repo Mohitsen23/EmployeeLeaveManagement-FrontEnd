@@ -30,12 +30,10 @@ import axios from "axios";
     };
     fetchLeaveQuota();
     console.log("leave quota data ", leaveQuota);
-<<<<<<< Updated upstream
+
 
     axios.get("https://localhost:6260/download/Document")
-=======
-    axios.get("https://localhost:7189/download/Document")
->>>>>>> Stashed changes
+ 
       .then((res) => {
         setDocumentData(res.data);
         console.log("response data", document);
@@ -47,13 +45,10 @@ import axios from "axios";
 
   console.log("leangth of leaveQuota", leaveQuota);
   const handleDelete = (id) => {
-<<<<<<< Updated upstream
+
     const updatedLeaves = LeaveStatus.filter(data => data.id !== id);
     const response = axios.delete(`https://localhost:6260/deleteLeave/${id}`)
-=======
-  const updatedLeaves = LeaveStatus.filter(data => data.id !== id);
-  const response = axios.delete(`https://localhost:7189/deleteLeave/${id}`)
->>>>>>> Stashed changes
+
     dispatch(addLeaves(updatedLeaves));
 
   }
